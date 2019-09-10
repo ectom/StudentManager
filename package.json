@@ -1,0 +1,19 @@
+{
+  "name": "pytron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "Ethan Tom",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^6.0.8"
+  },
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
