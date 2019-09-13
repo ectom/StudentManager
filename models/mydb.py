@@ -36,6 +36,7 @@ studentTable = """CREATE TABLE IF NOT EXISTS `mydb`.`students` (
   `math` TINYINT NULL,
   `reading` TINYINT NULL,
   `notes` TEXT NULL,
+  `qrcode` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   INDEX `parent_1_id_idx` (`parent_1_id` ASC) VISIBLE,
   INDEX `parent_2_id_idx` (`parent_2_id` ASC) VISIBLE,
