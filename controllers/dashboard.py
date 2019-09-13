@@ -10,25 +10,6 @@ app = Flask(__name__)
 app.secret_key = 'key'
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-users = [
-    {
-        "name": "Nicholas",
-        "age": 42,
-        "occupation": "Network Engineer"
-    },
-    {
-        "name": "Elvin",
-        "age": 32,
-        "occupation": "Doctor"
-    },
-    {
-        "name": "Jass",
-        "age": 22,
-        "occupation": "Web Developer"
-    }
-]
-
-
 def connect():
     mydb = mysql.connector.connect(
         host="localhost",
@@ -39,7 +20,40 @@ def connect():
     return mydb
 
 
-@app.route('/getParents', methods=['GET'])
+# return student id based on qrcode
+def getStudentID(qrcode):
+    mydb = connect()
+    mycursor = mydb.cursor()
+    sql = "SELECT student_id FROM students WHERE qrcode='" + str(qrcode) + "';"
+    mycursor.execute(sql)
+    student_id = mycursor.fetchone()[0]
+    if(student_id):
+        return student_id
+    return None
+
+
+# scans qrcode and returns value
+def scanStudent(imgPath):
+    return decode(Image.open(imgPath))
+
+
+# check if student has checked in already
+def checkTimeInAttendance(student_id):
+    mydb = connect()
+    try:
+        mycursor = mydb.cursor()
+        sql = "SELECT * FROM time WHERE student_id = %s AND date(time_in) = CURDATE();"
+        val = (student_id)
+        mycursor.execute(sql, val)
+        latest = mycursor.fetchone()
+        if(latest != None):
+            return True
+    except mysql.connector.Error as error:
+        print("Failed selecting record from time table: {}".format(error))
+    return False
+
+
+@app.route('/parent/all', methods=['GET'])
 def getAllParents():
     mydb = connect()
     mycursor = mydb.cursor()
@@ -48,13 +62,15 @@ def getAllParents():
     return jsonify(parents), 200
 
 
-@app.route('/getParent', methods=['POST'])
+@app.route('/parent', methods=['POST'])
 def getParent():
+    data = {
+        "first_name": request.form['first_name']
+    }
     mydb = connect()
-    first_name = request.form['first_name']
     print("wfefwvf",first_name)
     mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM parents WHERE first_name='"+first_name+"'")
+    mycursor.execute("SELECT * FROM parents WHERE first_name= '" + data["first_name"]+ "';")
     parents = mycursor.fetchall()
     for parent in parents:
         print(parent)
@@ -63,7 +79,7 @@ def getParent():
     return "Parent not found", 404
 
 
-@app.route('/getStudents', methods=['GET'])
+@app.route('/student/all', methods=['GET'])
 def selectAllStudents():
     mydb = connect()
     mycursor = mydb.cursor()
@@ -72,8 +88,7 @@ def selectAllStudents():
     return students
 
 
-# student_id, qrcode
-@app.route('/getStudent', methods=['POST'])
+@app.route('/student', methods=['POST'])
 def getStudent():
     mydb = connect()
     data = {
@@ -87,8 +102,7 @@ def getStudent():
     return "User not found", 404
 
 
-# first, middle, last, carrier, phone_number, email, messaging, emailing, guardian, notes
-@app.route('/addParent', methods=['POST'])
+@app.route('/parent/add', methods=['POST'])
 def addParent():
     data = {
         "first": request.form["first"],
@@ -117,8 +131,36 @@ def addParent():
     return "success"
 
 
-# parent_id, language
-@app.route('/addLanguage', methods=['POST'])
+@app.route('/parent/edit', methods=['PUT'])
+def addParent():
+    data = {
+        "first": request.form["first"],
+        "middle": request.form["middle"],
+        "last": request.form["last"],
+        "carrier": request.form["carrier"],
+        "phone_number": request.form["phone_number"],
+        "email": request.form["email"],
+        "messaging": request.form["messaging"],
+        "emailing": request.form["emailing"],
+        "guardian": request.form["guardian"],
+        "notes": request.form["notes"]
+    }
+    mydb = connect()
+    try:
+        mycursor = mydb.cursor()
+        sql = "INSERT INTO `mydb`.`parents` (`first_name`, `middle_name`, `last_name`, `carrier`, `phone_number`, `email`, `messaging`, `emailing`, `guardian`, `notes`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+        val = (data['first'], data['middle'], data['last'], data['carrier'], data['phone_number'], data['email'], data['messaging'], data['emailing'], data['guardian'], data['notes'])
+        mycursor.execute(sql, val)
+        print("Parent Table: successfully inserted", data['first'], data['last'])
+        return mycursor.lastrowid
+    except mysql.connector.Error as error:
+        mydb.rollback()
+        print("Failed inserting record into parent table: {}".format(error))
+        return "error"
+    return "success"
+
+
+@app.route('/language/add', methods=['POST'])
 def addLanguage():
     data = {
         "parent_id": request.form["parent_id"],
@@ -138,8 +180,7 @@ def addLanguage():
     return "success"
 
 
-# parent_1_id, parent_2_id, student_id, first, middle, last, math, reading, notes, qrcode
-@app.route('/addStudent', methods=['POST'])
+@app.route('/student/add', methods=['POST'])
 def addStudent():
     data = {
         "parent_1_id": request.form["parent_1_id"],
@@ -168,44 +209,33 @@ def addStudent():
     return "success"
 
 
-# student_id, qrcode
-@app.route('/timeIn', methods=['POST'])
-def displayTime():
+@app.route('/timeInOut', methods=['POST'])
+def timeInOut():
     data = {
-        "student_id": request.form['student_id'],
+        "student_id": '',
         "qrcode": request.form['qrcode']
     }
+    data['student_id'] = getStudentID(data['qrcode'])
+    checkedIn = checkTimeInAttendance(data['student_id'])
+    time_column = ''
     mydb = connect()
     try:
         now = datetime.datetime.now()
         mycursor = mydb.cursor()
-        sql = "INSERT INTO `mydb`.`time` (`student_id`, `time_in`) VALUES (%s, %s)"
-        val = (data['student_id'], now)
+        if(checkedIn):
+            time_column = 'time_out'
+        else:
+            time_column = 'time_in'
+        sql = "INSERT INTO `mydb`.`time` (`student_id`, `%s`) VALUES (%s, %s)"
+        val = (time_column, data['student_id'], now)
         mycursor.execute(sql, val)
         mydb.commit()
-        print("Time successfully inserted ", data['student_id'], now)
+        print("Time successfully inserted into %s column for student %s at time %s", time_column, data['student_id'], now)
     except mysql.connector.Error as error:
         mydb.rollback()
         print("Failed inserting record into time table: {}".format(error))
         return "error"
     return "success"
 
-
-def getStudentID(qrcode):
-    mydb = connect()
-    mycursor = mydb.cursor()
-    sql = "SELECT student_id FROM students WHERE qrcode='" + str(qrcode) + "';"
-    mycursor.execute(sql)
-    student_id = mycursor.fetchone()[0]
-    if(student_id):
-        return student_id
-    return None
-
-
-
-def scanStudent(imgPath):
-    return decode(Image.open(imgPath))
-# code = scanStudent('./qrcodes/2018-06-26_14-16-01_325.jpeg')
-# displayTime(mydb, code)
 
 app.run(debug=True)
