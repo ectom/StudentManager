@@ -337,19 +337,20 @@ def timeInOut():
         "qrcode": request.form['qrcode']
     }
     data['student_id'] = getStudentID(data['qrcode'])
-    checkedIn = checkTimeInAttendance(data['student_id'])
+    checked_in = checkTimeInAttendance(data['student_id'])
     mydb = connect()
     try:
         now = datetime.datetime.now()
+        formatted_datetime =  "%s/%s/%s - %s:%s:%s"%(str(now.month), str(now.day), str(now.year), str(now.hour), str(now.minute), str(now.second))
         mycursor = mydb.cursor()
         val = data['qrcode']
-        if(checkedIn):
+        if(checked_in):
             sql = "INSERT INTO time (student_id, time_out) VALUES ((SELECT student_id FROM students WHERE qrcode = %s), NOW())"%val
         else:
             sql = "INSERT INTO time (student_id, time_in) VALUES ((SELECT student_id FROM students WHERE qrcode = %s), NOW())"%val
         mycursor.execute(sql)
         mydb.commit()
-        return("Time successfully inserted into column for student %s: %s"%(getStudentID(data['qrcode']), now))
+        return("Time successfully inserted into column for student %s: %s"%(getStudentID(data['qrcode']), formatted_datetime))
     except mysql.connector.Error as error:
         mydb.rollback()
         print("Failed inserting record into time table: {}".format(error))
