@@ -53,7 +53,7 @@ studentTable = """CREATE TABLE IF NOT EXISTS `mydb`.`students` (
 """
 
 timeTable = """CREATE TABLE IF NOT EXISTS `mydb`.`time` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `student_id` INT NULL,
   `time_in` DATETIME NULL,
   `time_out` DATETIME NULL,
@@ -61,9 +61,9 @@ timeTable = """CREATE TABLE IF NOT EXISTS `mydb`.`time` (
   INDEX `student_id_idx` (`student_id` ASC) VISIBLE,
   CONSTRAINT `student_id`
     FOREIGN KEY (`student_id`)
-    REFERENCES `mydb`.`students` (`id`)
+    REFERENCES `mydb`.`students` (`student_id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION);"""
+    ON UPDATE NO ACTION;"""
 
 languageTable = """CREATE TABLE IF NOT EXISTS `mydb`.`language` (
   `id` INT NOT NULL AUTO_INCREMENT,
