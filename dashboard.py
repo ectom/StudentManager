@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, flash, session, jsonify, make_response
+from flask import Flask, render_template, request, requests, redirect, flash, session, jsonify, make_response
 from flask import jsonify
 from pyzbar.pyzbar import decode
 from PIL import Image
@@ -25,6 +25,14 @@ def index():
         else:
             time.append('Checked Out')
     return render_template('index.html', students=students, time=time)
+
+
+@app.route('/student/page/<qrcode>')
+def studentPage(qrcode):
+    # get student info here
+    form = {"qrcode": qrcode}
+    student = requests.post('/student/one', form=form)
+    return render_template('student.html', student=student)
 
 # --------------------------------- Internal Functions ----------------------------------------
 
