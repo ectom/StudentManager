@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, flash, session
+from flask import Flask, render_template, request, redirect, flash, session, jsonify, make_response
 from flask import jsonify
 from pyzbar.pyzbar import decode
 from PIL import Image
@@ -9,6 +9,24 @@ import re
 app = Flask(__name__)
 app.secret_key = 'key'
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+
+# --------------------------------- HTML Templates ----------------------------------------
+
+@app.route('/')
+def index():
+    students = getAllStudents()
+    time = []
+    for student in students:
+        time_in, time_out = checkTimeInAttendance(student[1])
+        if(time_in == False and time_out == False):
+            time.append('Check In')
+        elif(time_in == True and time_out == False):
+            time.append('Check Out')
+        else:
+            time.append('Checked Out')
+    return render_template('index.html', students=students, time=time)
+
+# --------------------------------- Internal Functions ----------------------------------------
 
 def connect():
     mydb = mysql.connector.connect(
@@ -46,10 +64,15 @@ def checkTimeInAttendance(student_id):
         mycursor.execute(sql)
         latest = mycursor.fetchone()
         if(latest != None):
-            return True
+            sql = "SELECT * FROM time WHERE student_id = %s AND date(time_out) = CURDATE();"%student_id
+            mycursor.execute(sql)
+            latest = mycursor.fetchone()
+            if(latest != None):
+                return(True, True)
+            return(True, False)
     except mysql.connector.Error as error:
         print("Failed selecting record from time table: {}".format(error))
-    return False
+    return (False, False)
 
 
 # this function creates sql statement with values only if variables are not null
@@ -80,8 +103,8 @@ def getParent():
     try:
         mydb = connect()
         mycursor = mydb.cursor()
-        sql = "SELECT * FROM parents WHERE id = " + data['parent_id'] + ";"
-        # val = data["parent_id"]
+        val = data["parent_id"]
+        sql = "SELECT * FROM parents WHERE id = %s;"%val
         mycursor.execute(sql)
         parent = mycursor.fetchone()
         return jsonify(parent), 200
@@ -119,7 +142,6 @@ def addParent():
     return "error"
 
 
-# this needs work
 @app.route('/parent/edit', methods=['PUT'])
 def editParent():
     parent_id = request.form["parent_id"]
@@ -232,7 +254,7 @@ def getAllStudents():
     mydb = connect()
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM students")
-    students = jsonify(mycursor.fetchall())
+    students = mycursor.fetchall()
     return students
 
 
@@ -337,14 +359,16 @@ def timeInOut():
         "qrcode": request.form['qrcode']
     }
     data['student_id'] = getStudentID(data['qrcode'])
-    checked_in = checkTimeInAttendance(data['student_id'])
+    checked_in, checked_out = checkTimeInAttendance(data['student_id'])
     mydb = connect()
     try:
         now = datetime.datetime.now()
         formatted_datetime =  "%s/%s/%s - %s:%s:%s"%(str(now.month), str(now.day), str(now.year), str(now.hour), str(now.minute), str(now.second))
         mycursor = mydb.cursor()
         val = data['qrcode']
-        if(checked_in):
+        if(checked_in and checked_out):
+            return("Student has already checked out")
+        elif(checked_in):
             sql = "INSERT INTO time (student_id, time_out) VALUES ((SELECT student_id FROM students WHERE qrcode = %s), NOW())"%val
         else:
             sql = "INSERT INTO time (student_id, time_in) VALUES ((SELECT student_id FROM students WHERE qrcode = %s), NOW())"%val
