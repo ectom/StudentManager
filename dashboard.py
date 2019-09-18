@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, requests, redirect, flash, session, jsonify, make_response
+from flask import Flask, render_template, request, redirect, flash, session, jsonify, make_response
 from flask import jsonify
 from pyzbar.pyzbar import decode
 from PIL import Image
@@ -30,9 +30,20 @@ def index():
 @app.route('/student/page/<qrcode>')
 def studentPage(qrcode):
     # get student info here
-    form = {"qrcode": qrcode}
-    student = requests.post('/student/one', form=form)
-    return render_template('student.html', student=student)
+    student = getStudent(qrcode)
+    if(student == 404):
+        return render_template('student404.html')
+    if(student[2]):
+        parent1 = getParent(student[2])
+    if(student[3]):
+        parent2 = getParent(student[3])
+    return render_template('student.html', student=student, parent1=parent1, parent2=parent2)
+
+
+@app.route('/parent/page/<parent>')
+def parentPage(parent):
+    parent = parent
+    return render_template('parent.html', parent=parent)
 
 # --------------------------------- Internal Functions ----------------------------------------
 
@@ -103,21 +114,17 @@ def getAllParents():
     return jsonify(parents), 200
 
 
-@app.route('/parent/one', methods=['POST'])
-def getParent():
-    data = {
-        "parent_id": request.form['parent_id']
-    }
+@app.route('/parent/one/<parent_id>', methods=['GET'])
+def getParent(parent_id):
     try:
         mydb = connect()
         mycursor = mydb.cursor()
-        val = data["parent_id"]
-        sql = "SELECT * FROM parents WHERE id = %s;"%val
+        sql = "SELECT * FROM parents WHERE id = %s;"%parent_id
         mycursor.execute(sql)
         parent = mycursor.fetchone()
-        return jsonify(parent), 200
+        return parent
     except mysql.connector.Error as error:
-        return "Parent not found", 404
+        return 404
 
 
 @app.route('/parent/add', methods=['POST'])
@@ -266,18 +273,17 @@ def getAllStudents():
     return students
 
 
-@app.route('/student/one', methods=['POST'])
-def getStudent():
-    mydb = connect()
-    data = {
-        "qrcode": request.form['qrcode']
-    }
-    mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM students WHERE qrcode='" + data["qrcode"] + "'")
-    student = mycursor.fetchone()
-    if(student[10]==data["qrcode"]):
-        return jsonify(student), 200
-    return "User not found", 404
+@app.route('/student/one/<qrcode>', methods=['GET'])
+def getStudent(qrcode):
+    try:
+        mydb = connect()
+        mycursor = mydb.cursor()
+        sql = "SELECT * FROM students WHERE qrcode=%s"%qrcode
+        mycursor.execute(sql)
+        student = mycursor.fetchone()
+        return student
+    except mysql.connector.Error as error:
+        return 404
 
 
 @app.route('/student/add', methods=['POST'])
