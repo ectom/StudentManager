@@ -292,9 +292,9 @@ def addStudent():
         "parent_1_id": request.form["parent_1_id"],
         "parent_2_id": request.form["parent_2_id"],
         "student_id": request.form["student_id"],
-        "first": request.form["first"],
-        "middle": request.form["middle"],
-        "last": request.form["last"],
+        "first_name": request.form["first_name"],
+        "middle_name": request.form["middle_name"],
+        "last_name": request.form["last_name"],
         "math": request.form["math"],
         "reading": request.form["reading"],
         "notes": request.form["notes"],
@@ -304,9 +304,9 @@ def addStudent():
     try:
         mycursor = mydb.cursor()
         sql = "INSERT INTO `mydb`.`students` (`parent_1_id`, `parent_2_id`, `student_id`, `first_name`, `middle_name`, `last_name`, `math`, `reading`, `notes`, `qrcode`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-        val = (data["parent_1_id"], data["parent_2_id"], data["student_id"], data["first"], data["middle"], data["last"], data["math"], data["reading"], data["notes"], data["qrcode"])
+        val = (data["parent_1_id"], data["parent_2_id"], data["student_id"], data["first_name"], data["middle_name"], data["last_name"], data["math"], data["reading"], data["notes"], data["qrcode"])
         mycursor.execute(sql, val)
-        print("Student, %s %s, successfully inserted", data["first"], data["last"])
+        print("Student, %s %s, successfully inserted", data["first_name"], data["last_name"])
         mydb.commit()
         return "success"
     except mysql.connector.Error as error:
