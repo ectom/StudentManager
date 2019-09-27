@@ -12,7 +12,7 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 # --------------------------------- HTML Templates ----------------------------------------
 
-@app.route('/', method=['GET'])
+@app.route('/', methods=['GET'])
 def index():
     students = get_all_students()
     time = []
@@ -27,7 +27,7 @@ def index():
     return render_template('index.html', students=students, time=time)
 
 
-@app.route('/student/page/<qrcode>', method=['GET'])
+@app.route('/student/page/<qrcode>', methods=['GET'])
 def student_page(qrcode):
     # get student info here
     student = get_student(qrcode)
@@ -40,32 +40,17 @@ def student_page(qrcode):
     return render_template('student.html', student=student, parent1=parent1, parent2=parent2)
 
 
-@app.route('/parent/page/<parent>', method=['GET'])
+@app.route('/parent/page/<parent>', methods=['GET'])
 def parent_page(parent):
     parent = parent
     return render_template('parent.html', parent=parent)
 
 
-@app.route('/parent/form1', method=['POST'])
+@app.route('/parent/form1', methods=['GET'])
 def render_parent_form1():
-    parent1 = {
-        'first_name': request.form['first_name'],
-        'middle_name': request.form['middle_name'],
-        'last_name': request.form['last_name'],
-        'carrier': request.form['carrier'],
-        'phone_number': request.form['phone_number'],
-        'email': request.form['email'],
-        'emailing': request.form['emailing'],
-        'texting': request.form['texting'],
-        'guardian': request.form['guardian'],
-        'notes': request.form['notes'],
-        'second_parent': request.form['second_parent']
-    }
-    if(request.form['second_parent'] == None):
-        return render_template('addstudent.html', parent1=parent1, parent2=None)
-    return render_template('addparent.html', parent1=parent1)
+    return render_template('addparent.html')
 
-@app.rout('/parent/form2', method=['POST'])
+@app.route('/parent/form2', methods=['POST'])
 def render_parent_form2():
     parent1 = request.form['parent1']
     parent2 = {

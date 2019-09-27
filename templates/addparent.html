@@ -99,16 +99,12 @@
                     <input class="form-control" type="textarea" name="notes" value="">
                 </div>
             </div>
-            {% if parent1 == None %}
             <div class="form-group row form-check">
                 <label for="second_parent">Add another parent?
                     <input type="checkbox" class="form-check-input" id="second_parent" onclick="parentToggle()" for="second_parent">
                     <span for="second_parent"></span>
                 </label>
             </div>
-            {% else %}
-            <input hidden type="hidden" name="parent1" value="{[parent1]}">
-            {% endif %}
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <button type="submit" name="submit">Submit</button>
