@@ -24,13 +24,16 @@
                     next_parent = false
                     console.log(next_parent);
                 }
-
             }
         </script>
     </head>
     <body>
         <h1>Add Parent</h1>
-        <form class="form-horizontal" action="student.html" method="post">
+        {% if next_parent == True %}
+        <form class="form-horizontal" action="/parent/form2" method="post">
+        {% else %}
+        <form class="form-horizontal" action="/student/form" method="post">
+        {% endif %}
             <div class="form-group">
                 <label class="control-label col-md-2" for="first_name">First Name</label>
                 <div class="col-md-10">
@@ -78,19 +81,17 @@
                 </label>
             </div>
             <div class="form-group row">
-                <label class="control-label col-md-2" for="guardian">Guardian</label>
-                <div class="col-md-10">
-                    <select>
-                       <option value = ""  selected>Guardian Status</option>
-                       <option value = "Father">Father</option>
-                       <option value = "Mother">Mother</option>
-                       <option value = "Uncle">Uncle</option>
-                       <option value = "Aunt">Aunt</option>
-                       <option value = "Grandfather">Grandfather</option>
-                       <option value = "Grandmother">Grandmother</option>
-                       <option value = "Other">Other</option>
-                    </select>
-                </div>
+                <label class="control-label  col col-md-2" for="guardian">Guardian</label>
+                <select class="form-check-input col col-md-10" style="display: block;">
+                    <option value = "" selected>Guardian Status</option>
+                    <option value = "Father">Father</option>
+                    <option value = "Mother">Mother</option>
+                    <option value = "Uncle">Uncle</option>
+                    <option value = "Aunt">Aunt</option>
+                    <option value = "Grandfather">Grandfather</option>
+                    <option value = "Grandmother">Grandmother</option>
+                    <option value = "Other">Other</option>
+                </select>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-2" for="notes">Notes</label>
@@ -98,12 +99,16 @@
                     <input class="form-control" type="textarea" name="notes" value="">
                 </div>
             </div>
+            {% if parent1 == None %}
             <div class="form-group row form-check">
                 <label for="second_parent">Add another parent?
                     <input type="checkbox" class="form-check-input" id="second_parent" onclick="parentToggle()" for="second_parent">
                     <span for="second_parent"></span>
                 </label>
             </div>
+            {% else %}
+            <input hidden type="hidden" name="parent1" value="{[parent1]}">
+            {% endif %}
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <button type="submit" name="submit">Submit</button>

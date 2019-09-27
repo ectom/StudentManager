@@ -12,12 +12,12 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 # --------------------------------- HTML Templates ----------------------------------------
 
-@app.route('/')
+@app.route('/', method=['GET'])
 def index():
-    students = getAllStudents()
+    students = get_all_students()
     time = []
     for student in students:
-        time_in, time_out = checkTimeInAttendance(student[1])
+        time_in, time_out = check_time_in_attendance(student[1])
         if(time_in == False and time_out == False):
             time.append('Check In')
         elif(time_in == True and time_out == False):
@@ -27,23 +27,60 @@ def index():
     return render_template('index.html', students=students, time=time)
 
 
-@app.route('/student/page/<qrcode>')
-def studentPage(qrcode):
+@app.route('/student/page/<qrcode>', method=['GET'])
+def student_page(qrcode):
     # get student info here
-    student = getStudent(qrcode)
+    student = get_student(qrcode)
     if(student == 404):
         return render_template('student404.html')
     if(student[2]):
-        parent1 = getParent(student[2])
+        parent1 = get_parent(student[2])
     if(student[3]):
-        parent2 = getParent(student[3])
+        parent2 = get_parent(student[3])
     return render_template('student.html', student=student, parent1=parent1, parent2=parent2)
 
 
-@app.route('/parent/page/<parent>')
-def parentPage(parent):
+@app.route('/parent/page/<parent>', method=['GET'])
+def parent_page(parent):
     parent = parent
     return render_template('parent.html', parent=parent)
+
+
+@app.route('/parent/form1', method=['POST'])
+def render_parent_form1():
+    parent1 = {
+        'first_name': request.form['first_name'],
+        'middle_name': request.form['middle_name'],
+        'last_name': request.form['last_name'],
+        'carrier': request.form['carrier'],
+        'phone_number': request.form['phone_number'],
+        'email': request.form['email'],
+        'emailing': request.form['emailing'],
+        'texting': request.form['texting'],
+        'guardian': request.form['guardian'],
+        'notes': request.form['notes'],
+        'second_parent': request.form['second_parent']
+    }
+    if(request.form['second_parent'] == None):
+        return render_template('addstudent.html', parent1=parent1, parent2=None)
+    return render_template('addparent.html', parent1=parent1)
+
+@app.rout('/parent/form2', method=['POST'])
+def render_parent_form2():
+    parent1 = request.form['parent1']
+    parent2 = {
+        'first_name': request.form['first_name'],
+        'middle_name': request.form['middle_name'],
+        'last_name': request.form['last_name'],
+        'carrier': request.form['carrier'],
+        'phone_number': request.form['phone_number'],
+        'email': request.form['email'],
+        'emailing': request.form['emailing'],
+        'texting': request.form['texting'],
+        'guardian': request.form['guardian'],
+        'notes': request.form['notes']
+    }
+
 
 # --------------------------------- Internal Functions ----------------------------------------
 
@@ -58,7 +95,7 @@ def connect():
 
 
 # return student id based on qrcode
-def getStudentID(qrcode):
+def get_student_id(qrcode):
     mydb = connect()
     mycursor = mydb.cursor()
     sql = "SELECT student_id FROM students WHERE qrcode='" + str(qrcode) + "';"
@@ -70,12 +107,12 @@ def getStudentID(qrcode):
 
 
 # scans qrcode and returns value
-def scanStudent(imgPath):
+def scan_student(imgPath):
     return decode(Image.open(imgPath))
 
 
 # check if student has checked in already
-def checkTimeInAttendance(student_id):
+def check_time_in_attendance(student_id):
     mydb = connect()
     try:
         mycursor = mydb.cursor()
@@ -95,7 +132,7 @@ def checkTimeInAttendance(student_id):
 
 
 # this function creates sql statement with values only if variables are not null
-def editSQLStatement(data):
+def edit_SQL_statement(data):
     sql = ""
     for key, value in data.items():
         if(value != ""):
@@ -106,7 +143,7 @@ def editSQLStatement(data):
 # --------------------------------- Parent Functions ----------------------------------------
 
 @app.route('/parent/all', methods=['GET'])
-def getAllParents():
+def get_all_parents():
     mydb = connect()
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM parents")
@@ -115,7 +152,7 @@ def getAllParents():
 
 
 @app.route('/parent/one/<parent_id>', methods=['GET'])
-def getParent(parent_id):
+def get_parent(parent_id):
     try:
         mydb = connect()
         mycursor = mydb.cursor()
@@ -128,7 +165,7 @@ def getParent(parent_id):
 
 
 @app.route('/parent/add', methods=['POST'])
-def addParent():
+def add_parent():
     data = {
         "first": request.form["first"],
         "middle": request.form["middle"],
@@ -158,7 +195,7 @@ def addParent():
 
 
 @app.route('/parent/edit', methods=['PUT'])
-def editParent():
+def edit_parent():
     parent_id = request.form["parent_id"]
     data = {
         "first_name": request.form["first_name"],
@@ -172,7 +209,7 @@ def editParent():
         "guardian": request.form["guardian"],
         "notes": request.form["notes"]
     }
-    columns = editSQLStatement(data)
+    columns = edit_SQL_statement(data)
     mydb = connect()
     try:
         mycursor = mydb.cursor()
@@ -188,7 +225,7 @@ def editParent():
 
 
 @app.route('/parent/delete', methods=['DELETE'])
-def deleteParent():
+def delete_parent():
     data = {
         "parent_id" : request.form["parent_id"]
     }
@@ -211,7 +248,7 @@ def deleteParent():
 
 
 @app.route('/language/add', methods=['POST'])
-def addLanguage():
+def add_language():
     data = {
         "parent_id": request.form["parent_id"],
         "language": request.form["language"]
@@ -239,7 +276,7 @@ def addLanguage():
 
 
 @app.route('/language/delete', methods=['DELETE'])
-def deleteLanguage():
+def delete_language():
     data = {
         "parent_id": request.form["parent_id"],
         "language": request.form["language"]
@@ -265,7 +302,7 @@ def deleteLanguage():
 # --------------------------------- Student Functions ----------------------------------------
 
 @app.route('/student/all', methods=['GET'])
-def getAllStudents():
+def get_all_students():
     mydb = connect()
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM students")
@@ -274,7 +311,7 @@ def getAllStudents():
 
 
 @app.route('/student/one/<qrcode>', methods=['GET'])
-def getStudent(qrcode):
+def get_student(qrcode):
     try:
         mydb = connect()
         mycursor = mydb.cursor()
@@ -287,7 +324,7 @@ def getStudent(qrcode):
 
 
 @app.route('/student/add', methods=['POST'])
-def addStudent():
+def add_student():
     data = {
         "parent_1_id": request.form["parent_1_id"],
         "parent_2_id": request.form["parent_2_id"],
@@ -316,7 +353,7 @@ def addStudent():
 
 
 @app.route('/student/edit', methods=['PUT'])
-def editStudent():
+def edit_student():
     student_id = request.form["student_id"]
     data = {
         "parent_1_id": request.form["parent_1_id"],
@@ -329,7 +366,7 @@ def editStudent():
         "notes": request.form["notes"],
         "qrcode": request.form["qrcode"]
     }
-    columns = editSQLStatement(data)
+    columns = edit_SQL_statement(data)
     mydb = connect()
     try:
         mycursor = mydb.cursor()
@@ -344,7 +381,7 @@ def editStudent():
 
 
 @app.route('/student/delete', methods=['DELETE'])
-def deleteStudent():
+def delete_student():
     data = {
         "student_id" : request.form["student_id"]
     }
@@ -366,14 +403,14 @@ def deleteStudent():
     return "error"
 
 
-@app.route('/timeInOut', methods=['POST'])
-def timeInOut():
+@app.route('/time_in_out', methods=['POST'])
+def time_in_out():
     data = {
         "student_id": '',
         "qrcode": request.form['qrcode']
     }
-    data['student_id'] = getStudentID(data['qrcode'])
-    checked_in, checked_out = checkTimeInAttendance(data['student_id'])
+    data['student_id'] = get_student_id(data['qrcode'])
+    checked_in, checked_out = check_time_in_attendance(data['student_id'])
     mydb = connect()
     try:
         now = datetime.datetime.now()
@@ -388,7 +425,7 @@ def timeInOut():
             sql = "INSERT INTO time (student_id, time_in) VALUES ((SELECT student_id FROM students WHERE qrcode = %s), NOW())"%val
         mycursor.execute(sql)
         mydb.commit()
-        return("Time successfully inserted into column for student %s: %s"%(getStudentID(data['qrcode']), formatted_datetime))
+        return("Time successfully inserted into column for student %s: %s"%(get_student_id(data['qrcode']), formatted_datetime))
     except mysql.connector.Error as error:
         mydb.rollback()
         print("Failed inserting record into time table: {}".format(error))
