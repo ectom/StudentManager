@@ -52,8 +52,7 @@ def render_parent_form1():
 
 @app.route('/parent/form2', methods=['POST'])
 def render_parent_form2():
-    parent1 = request.form['parent1']
-    parent2 = {
+    parent1 = {
         'first_name': request.form['first_name'],
         'middle_name': request.form['middle_name'],
         'last_name': request.form['last_name'],
@@ -65,6 +64,27 @@ def render_parent_form2():
         'guardian': request.form['guardian'],
         'notes': request.form['notes']
     }
+    return render_template('addparent.html', parent1=parent1, p2=True)
+
+@app.route('/student/form', methods=['POST'])
+def render_student_form():
+    parent1 = request.form['parent1']
+    parent2 = None
+    if(request.form['p2']):
+        parent2 = {
+            'first_name': request.form['first_name'],
+            'middle_name': request.form['middle_name'],
+            'last_name': request.form['last_name'],
+            'carrier': request.form['carrier'],
+            'phone_number': request.form['phone_number'],
+            'email': request.form['email'],
+            'emailing': request.form['emailing'],
+            'texting': request.form['texting'],
+            'guardian': request.form['guardian'],
+            'notes': request.form['notes']
+        }
+    # may need some logic in rendering this form more than once for adding more than 1 student at a time
+    return render_template('addstudent.html', parent1=parent1, parent2=parent2)
 
 
 # --------------------------------- Internal Functions ----------------------------------------
