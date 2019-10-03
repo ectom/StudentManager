@@ -16,7 +16,7 @@
         <title>Add Student</title>
     </head>
     <body>
-        <form class="form-horizontal" action="index.html" method="post">
+        <form class="form-horizontal" id="student_form" action="/confirm" method="post">
             <div class="form-group">
                 <label class="control-label col-md-2" for="student_id">Student ID</label>
                 <div class="col-md-10">
@@ -63,11 +63,34 @@
                     <input class="form-control" type="text" name="qrcode" value="">
                 </div>
             </div>
+            <div class="form-group row form-check">
+                <label for="new_student">Add Another Student
+                    <input class="form-check-input" for="new_student" onchange="anotherStudent()" id="new_student" name="new_student" type="checkbox">
+                    <span for="new_student"></span>
+                </label>
+            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <button type="submit" name="submit">Submit</button>
                 </div>
             </div>
+            <input type="hidden" name="parent1" value="{{parent1}}">
+            <input type="hidden" name="parent2" value="{{parent2}}">
+            {% if students %}
+            <input type="hidden" name="students" value="{{students}}">
+            {% endif %}
         </form>
+
+        <script>
+            function anotherStudent() {
+                if($('#new_student').checked == true) {
+                    $('#student_form').attr('action', '/student/form');
+                    console.log($('#student_form').attr('action'));
+                } else {
+                    $('#student_form').attr('action', '/confirm');
+                    console.log($('#student_form').attr('action'));
+                }
+            }
+        </script>
     </body>
 </html>

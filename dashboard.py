@@ -5,7 +5,7 @@ import mysql.connector
 from PIL import Image
 from flask import Flask, render_template, request
 from flask import jsonify
-from pyzbar.pyzbar import decode
+# from pyzbar.pyzbar import decode
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -68,42 +68,56 @@ def render_parent_form2():
         'notes': request.form['notes']
     }
     print(parent1)
-    return render_template('addparent2.html')
+    return render_template('addparent2.html', parent1=parent1)
 
 
 @app.route('/student/form', methods=['POST'])
 def render_student_form():
-    # parent1 = request.form['parent1']
-    # parent2 = None
-    # if(request.form['p2']):
-    #     parent2 = {
-    #         'first_name': request.form['first_name'],
-    #         'middle_name': request.form['middle_name'],
-    #         'last_name': request.form['last_name'],
-    #         'carrier': request.form['carrier'],
-    #         'phone_number': request.form['phone_number'],
-    #         'email': request.form['email'],
-    #         'emailing': request.form['emailing'],
-    #         'texting': request.form['texting'],
-    #         'guardian': request.form['guardian'],
-    #         'notes': request.form['notes']
-    #     }
-    # if(request.form[new_student]):
-    #     student = {
-    #         "parent_1_id": request.form["parent_1_id"],
-    #         "parent_2_id": request.form["parent_2_id"],
-    #         "student_id": request.form["student_id"],
-    #         "first_name": request.form["first_name"],
-    #         "middle_name": request.form["middle_name"],
-    #         "last_name": request.form["last_name"],
-    #         "math": request.form["math"],
-    #         "reading": request.form["reading"],
-    #         "notes": request.form["notes"],
-    #         "qrcode": request.form["qrcode"]
-    #     }
-    #     students.append(student)
-    # may need some logic in rendering this form more than once for adding more than 1 student at a time
-    return render_template('addstudent.html')
+    parent1 = request.form.get('parent1')    
+    if request.form.get('second_parent') == 'on':
+        parent2 = "No Second Parent"
+    else:
+        parent2 = {
+            'first_name': request.form.get('first_name'),
+            'middle_name': request.form.get('middle_name'),
+            'last_name': request.form.get('last_name'),
+            'carrier': request.form.get('carrier'),
+            'phone_number': request.form.get('phone_number'),
+            'email': request.form.get('email'),
+            'emailing': request.form.get('emailing'),
+            'texting': request.form.get('texting'),
+            'guardian': request.form.get('guardian'),
+            'notes': request.form.get('notes')
+        }
+    try:
+        students = request.form['students']
+    except:
+        students = []
+    if request.form.get('new_student'):
+        students = request.form.get('students')
+        student = {
+            "parent_1_id": request.form.get("parent_1_id"),
+            "parent_2_id": request.form.get("parent_2_id"),
+            "student_id": request.form.get("student_id"),
+            "first_name": request.form.get("first_name"),
+            "middle_name": request.form.get("middle_name"),
+            "last_name": request.form.get("last_name"),
+            "math": request.form.get("math"),
+            "reading": request.form.get("reading"),
+            "notes": request.form.get("notes"),
+            "qrcode": request.form.get("qrcode")
+        }
+        students.append(student)
+        return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
+    return render_template('addstudent.html', parent1=parent1, parent2=parent2)
+
+
+@app.route('/confirm', methods=['POST'])
+def confirm_form():
+    parent1 = request.form.get('parent1')
+    parent2 = request.form.get('parent2')
+    students = request.form.get('students')
+    return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
 
 # --------------------------------- Internal Functions ----------------------------------------
@@ -131,8 +145,8 @@ def get_student_id(qrcode):
 
 
 # scans qrcode and returns value
-def scan_student(imgPath):
-    return decode(Image.open(imgPath))
+# def scan_student(imgPath):
+#     return decode(Image.open(imgPath))
 
 
 # check if student has checked in already
