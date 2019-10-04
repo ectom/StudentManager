@@ -89,7 +89,7 @@
     </div>
     <div class="form-group row form-check">
         <label for="second_parent">No Additional Parent
-            <input class="form-check-input" for="second_parent" onchange="disable()" id="second_parent" name="second_parent" type="checkbox">
+            <input class="form-check-input" for="second_parent" onchange="check()" id="second_parent" name="second_parent" type="checkbox">
             <span for="second_parent"></span>
         </label>
     </div>
@@ -99,15 +99,20 @@
         </div>
     </div>
     <input type="hidden" name="parent1" value="{{parent1}}">
+    <input type="hidden" id="parent_value" name="parent_value" value='false'>
 </form>
 <script type="text/javascript">
-    function disable() {
+    function check() {
         if(document.getElementById('second_parent').checked == true) {
             $('.disable').attr("disabled","disabled");
-            $('#second_parent').val(0)
+            $('#another_parent').val(false);
+            console.log($('#another_parent').val());
+            console.log("hello");
         } else {
             $('.disable').removeAttr('disabled');
-            $('#second_parent').val(1)
+            $('#another_parent').val(true);
+            console.log($('#another_parent').val());
+            console.log('hello');
         }
     }
 </script>

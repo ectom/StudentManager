@@ -5,7 +5,7 @@ import mysql.connector
 from PIL import Image
 from flask import Flask, render_template, request
 from flask import jsonify
-# from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import decode
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -73,11 +73,9 @@ def render_parent_form2():
 
 @app.route('/student/form', methods=['POST'])
 def render_student_form():
-    parent1 = request.form.get('parent1')   
-    print(request.form.get('second_parent'))
-    if request.form.get('second_parent') == 0:
-        parent2 = "No Second Parent"
-    else:
+    parent1 = request.form.get('parent1')
+    print("secondparent", request.form.get('another_parent'))
+    if request.form.get('another_parent') == "Second Parent":
         parent2 = {
             'first_name': request.form.get('first_name'),
             'middle_name': request.form.get('middle_name'),
@@ -90,9 +88,13 @@ def render_student_form():
             'guardian': request.form.get('guardian'),
             'notes': request.form.get('notes')
         }
+    elif request.form.get('another_parent') == 'No Second Parent':
+        parent2 = "No Second Parent"
+    # else:
+    #     raise ValueError('Error getting parent 2 boolean')
     students = []
     if request.form.get('students'):
-        students.append(request.form.get('students')[0])
+        students.append(request.form.get('students'))
     student = {
         "parent_1_id": request.form.get("parent_1_id"),
         "parent_2_id": request.form.get("parent_2_id"),
@@ -144,8 +146,8 @@ def get_student_id(qrcode):
 
 
 # scans qrcode and returns value
-# def scan_student(imgPath):
-#     return decode(Image.open(imgPath))
+def scan_student(imgPath):
+    return decode(Image.open(imgPath))
 
 
 # check if student has checked in already
