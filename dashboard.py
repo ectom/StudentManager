@@ -96,8 +96,7 @@ def render_student_form():
 def render_student_form_again():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
-    students = request.form.get('students')
-    print('getting', type(students),students)
+    students = eval(request.form.get('students'))
     if students == None:
         students = []
     student = {
@@ -113,7 +112,6 @@ def render_student_form_again():
         "qrcode": request.form.get("qrcode")
     }
     students.append(student)
-    print('afterappend', type(students),students)
     return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
 
 
@@ -122,7 +120,6 @@ def confirm_form():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
     students = eval(request.form.getlist('students')[0])
-    print('confirm', type(students),students)
     if students is None:
         students = []
     student = {
@@ -138,7 +135,6 @@ def confirm_form():
         "qrcode": request.form.get("qrcode")
     }
     students.append(student)
-    print('last', type(students), students)
     # TODO create confirm.html, put parents into db then add their ids to students. Then add students to db
     return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
