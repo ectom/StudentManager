@@ -3,7 +3,7 @@ import re
 
 import mysql.connector
 from PIL import Image
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask import jsonify
 # from pyzbar.pyzbar import decode
 
@@ -135,7 +135,6 @@ def confirm_form():
         "qrcode": request.form.get("qrcode")
     }
     students.append(student)
-    # TODO create confirm.html, put parents into db then add their ids to students. Then add students to db
     return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
 
@@ -163,7 +162,7 @@ def get_student_id(qrcode):
     return None
 
 
-# scans qrcode and returns value
+# scans qrcode and returns value TODO: scanning feature
 # def scan_student(imgPath):
 #     return decode(Image.open(imgPath))
 
@@ -196,6 +195,17 @@ def edit_SQL_statement(data):
             sql = sql + key + "='" + value + "',"
     sql = sql[:-1]
     return sql
+
+
+@app.route('/processing', methods=['POST'])
+def processing():
+    parent1 = request.form.get('parent1')
+    parent2 = request.form.get('parent2')
+    students = eval(request.form.getlist('students')[0])
+    mydb = connect()
+    p1_id = add_parent() # fix this flow along with student
+    # TODO put parents into db then add their ids to students. Then add students to db
+    return redirect('/')
 
 
 # --------------------------------- Parent Functions ----------------------------------------
