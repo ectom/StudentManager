@@ -21,7 +21,6 @@
 <h1>Add Parent</h1>
 
 <form action="/student/form" class="form-horizontal" id="parentForm" method="post" name="parentForm">
-    <input type="hidden" name="parent1" value="{{parent1}}">
     <div class="form-group">
         <label class="control-label col-md-2" for="first_name">First Name</label>
         <div class="col-md-10">
@@ -61,11 +60,11 @@
     </div>
     <div class="form-group row form-check">
         <label for="emailing">Emailing
-            <input class="form-check-input disable" for="emailing" name="emailing" type="checkbox" value='1'>
+            <input class="form-check-input disable" for="emailing" id="emailing" name="emailing" type="checkbox" value='1'>
             <span for="emailing"></span>
         </label>
         <label for="texting">Texting
-            <input class="form-check-input disable" for="texting" name="texting" type="checkbox" value=1>
+            <input class="form-check-input disable" for="texting" id="texting" name="texting" type="checkbox" value=1>
             <span for="texting"></span>
         </label>
     </div>
@@ -90,8 +89,7 @@
     </div>
     <div class="form-group row form-check">
         <label for="second_parent">No Additional Parent
-            <input class="form-check-input" for="second_parent" onchange="check()" id="second_parent" name="second_parent" type="checkbox"
-                   value='1'>
+            <input class="form-check-input" for="second_parent" onchange="disable()" id="second_parent" name="second_parent" type="checkbox">
             <span for="second_parent"></span>
         </label>
     </div>
@@ -100,15 +98,16 @@
             <button name="submit" type="submit">Submit</button>
         </div>
     </div>
+    <input type="hidden" name="parent1" value="{{parent1}}">
 </form>
-
-
 <script type="text/javascript">
-    function check() {
+    function disable() {
         if(document.getElementById('second_parent').checked == true) {
             $('.disable').attr("disabled","disabled");
+            $('#second_parent').val(0)
         } else {
-            $('.disable').removeAttr("disabled");
+            $('.disable').removeAttr('disabled');
+            $('#second_parent').val(1)
         }
     }
 </script>
