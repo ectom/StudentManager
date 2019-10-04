@@ -5,7 +5,7 @@ import mysql.connector
 from PIL import Image
 from flask import Flask, render_template, request
 from flask import jsonify
-from pyzbar.pyzbar import decode
+# from pyzbar.pyzbar import decode
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -74,7 +74,6 @@ def render_parent_form2():
 @app.route('/student/form', methods=['POST'])
 def render_student_form():
     parent1 = request.form.get('parent1')
-    print("secondparent", request.form.get('another_parent'))
     if request.form.get('another_parent') == "Second Parent":
         parent2 = {
             'first_name': request.form.get('first_name'),
@@ -88,13 +87,19 @@ def render_student_form():
             'guardian': request.form.get('guardian'),
             'notes': request.form.get('notes')
         }
-    elif request.form.get('another_parent') == 'No Second Parent':
+    else:
         parent2 = "No Second Parent"
-    # else:
-    #     raise ValueError('Error getting parent 2 boolean')
-    students = []
-    if request.form.get('students'):
-        students.append(request.form.get('students'))
+    return render_template('addstudent.html', parent1=parent1, parent2=parent2)
+
+
+@app.route('/student/form/again', methods=['POST'])
+def render_student_form_again():
+    parent1 = request.form.get('parent1')
+    parent2 = request.form.get('parent2')
+    students = request.form.get('students')
+    print('getting', type(students),students)
+    if students == None:
+        students = []
     student = {
         "parent_1_id": request.form.get("parent_1_id"),
         "parent_2_id": request.form.get("parent_2_id"),
@@ -102,13 +107,13 @@ def render_student_form():
         "first_name": request.form.get("first_name"),
         "middle_name": request.form.get("middle_name"),
         "last_name": request.form.get("last_name"),
-        "math": request.form.get("math"),                       # This value not being passed
-        "reading": request.form.get("reading"),                 # This value not being passed
+        "math": request.form.get("math"),
+        "reading": request.form.get("reading"),
         "notes": request.form.get("notes"),
         "qrcode": request.form.get("qrcode")
     }
     students.append(student)
-    print(students)
+    print('afterappend', type(students),students)
     return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
 
 
@@ -116,7 +121,24 @@ def render_student_form():
 def confirm_form():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
-    students = request.form.get('students')
+    students = eval(request.form.getlist('students')[0])
+    print('confirm', type(students),students)
+    if students is None:
+        students = []
+    student = {
+        "parent_1_id": request.form.get("parent_1_id"),
+        "parent_2_id": request.form.get("parent_2_id"),
+        "student_id": request.form.get("student_id"),
+        "first_name": request.form.get("first_name"),
+        "middle_name": request.form.get("middle_name"),
+        "last_name": request.form.get("last_name"),
+        "math": request.form.get("math"),
+        "reading": request.form.get("reading"),
+        "notes": request.form.get("notes"),
+        "qrcode": request.form.get("qrcode")
+    }
+    students.append(student)
+    print('last', type(students), students)
     # TODO create confirm.html, put parents into db then add their ids to students. Then add students to db
     return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
@@ -146,8 +168,8 @@ def get_student_id(qrcode):
 
 
 # scans qrcode and returns value
-def scan_student(imgPath):
-    return decode(Image.open(imgPath))
+# def scan_student(imgPath):
+#     return decode(Image.open(imgPath))
 
 
 # check if student has checked in already
