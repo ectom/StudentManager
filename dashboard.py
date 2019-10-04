@@ -73,8 +73,9 @@ def render_parent_form2():
 
 @app.route('/student/form', methods=['POST'])
 def render_student_form():
-    parent1 = request.form.get('parent1')    
-    if request.form.get('second_parent') == 'on':
+    parent1 = request.form.get('parent1')   
+    print(request.form.get('second_parent')) 
+    if request.form.get('second_parent') == 0:
         parent2 = "No Second Parent"
     else:
         parent2 = {
@@ -89,27 +90,24 @@ def render_student_form():
             'guardian': request.form.get('guardian'),
             'notes': request.form.get('notes')
         }
-    try:
-        students = request.form['students']
-    except:
-        students = []
-    if request.form.get('new_student'):
-        students = request.form.get('students')
-        student = {
-            "parent_1_id": request.form.get("parent_1_id"),
-            "parent_2_id": request.form.get("parent_2_id"),
-            "student_id": request.form.get("student_id"),
-            "first_name": request.form.get("first_name"),
-            "middle_name": request.form.get("middle_name"),
-            "last_name": request.form.get("last_name"),
-            "math": request.form.get("math"),
-            "reading": request.form.get("reading"),
-            "notes": request.form.get("notes"),
-            "qrcode": request.form.get("qrcode")
-        }
-        students.append(student)
-        return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
-    return render_template('addstudent.html', parent1=parent1, parent2=parent2)
+    students = []
+    if request.form.get('students'):
+        students.append(request.form.get('students')[0])
+    student = {
+        "parent_1_id": request.form.get("parent_1_id"),
+        "parent_2_id": request.form.get("parent_2_id"),
+        "student_id": request.form.get("student_id"),
+        "first_name": request.form.get("first_name"),
+        "middle_name": request.form.get("middle_name"),
+        "last_name": request.form.get("last_name"),
+        "math": request.form.get("math"),                       # This value not being passed
+        "reading": request.form.get("reading"),                 # This value not being passed
+        "notes": request.form.get("notes"),
+        "qrcode": request.form.get("qrcode")
+    }
+    students.append(student)
+    print(students)   
+    return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
 
 
 @app.route('/confirm', methods=['POST'])
@@ -117,6 +115,7 @@ def confirm_form():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
     students = request.form.get('students')
+    # TODO create confirm.html, put parents into db then add their ids to students. Then add students to db
     return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
 

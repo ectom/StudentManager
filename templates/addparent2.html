@@ -13,9 +13,8 @@
     <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="../static/css/student.css" rel="stylesheet">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <title>Add Second Parent</title>
 </head>
 <body>
@@ -101,15 +100,12 @@
     </div>
     <input type="hidden" name="parent1" value="{{parent1}}">
 </form>
-
-
 <script type="text/javascript">
     function disable() {
         if(document.getElementById('second_parent').checked == true) {
             $('.disable').attr("disabled","disabled");
             $('#second_parent').val(0)
         } else {
-            console.log('false');
             $('.disable').removeAttr('disabled');
             $('#second_parent').val(1)
         }
