@@ -13,65 +13,65 @@
     <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="../static/css/student.css" rel="stylesheet">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+    <link href="../static/css/materialize.css" rel="stylesheet">
+    <script src="../satic/js/materialize.js"></script>
     <title>Add Second Parent</title>
 </head>
 <body>
 <h1>Add Parent</h1>
 
 <form action="/student/form" class="form-horizontal" id="parentForm" method="post" name="parentForm">
+    <input type="hidden" name="parent1" value="{{parent1}}">
     <div class="form-group">
         <label class="control-label col-md-2" for="first_name">First Name</label>
         <div class="col-md-10">
-            <input class="form-control" name="first_name" type="text">
+            <input class="form-control disable" name="first_name" type="text">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-md-2" for="middle_name">Middle Name</label>
         <div class="col-md-10">
-            <input class="form-control" name="middle_name" type="text">
+            <input class="form-control disable" name="middle_name" type="text">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-md-2" for="last_name">Last Name</label>
         <div class="col-md-10">
-            <input class="form-control" name="last_name" type="text">
+            <input class="form-control disable" name="last_name" type="text">
         </div>
     </div>
     <!--            TODO make carrier drop down -->
     <div class="form-group">
         <label class="control-label col-md-2" for="carrier">Carrier</label>
         <div class="col-md-10">
-            <input class="form-control" name="carrier" type="text">
+            <input class="form-control disable" name="carrier" type="text">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-md-2" for="phone_number">Phone Number</label>
         <div class="col-md-10">
-            <input class="form-control" name="phone_number" type="text">
+            <input class="form-control disable" name="phone_number" type="text">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-md-2" for="email">Email</label>
         <div class="col-md-10">
-            <input class="form-control" name="email" type="text" value="">
+            <input class="form-control disable" name="email" type="text" value="">
         </div>
     </div>
     <div class="form-group row form-check">
         <label for="emailing">Emailing
-            <input class="form-check-input" for="emailing" id="emailing" name="emailing" type="checkbox" value='1'>
+            <input class="form-check-input disable" for="emailing" name="emailing" type="checkbox" value='1'>
             <span for="emailing"></span>
         </label>
         <label for="texting">Texting
-            <input class="form-check-input" for="texting" id="texting" name="texting" type="checkbox" value=1>
+            <input class="form-check-input disable" for="texting" name="texting" type="checkbox" value=1>
             <span for="texting"></span>
         </label>
     </div>
     <div class="form-group row">
         <label class="control-label  col col-md-2" for="guardian">Guardian</label>
-        <select class="form-check-input col col-md-10 .browser-default" name="guardian" style="display: block;">
+        <select class="form-check-input col col-md-10 .browser-default disable" name="guardian" style="display: block;">
             <option disabled selected value="">Guardian Status</option>
             <option value="Father">Father</option>
             <option value="Mother">Mother</option>
@@ -85,7 +85,7 @@
     <div class="form-group">
         <label class="control-label col-md-2" for="notes">Notes</label>
         <div class="col-md-10">
-            <input class="form-control" name="notes" type="textarea">
+            <input class="form-control disable" name="notes" type="textarea">
         </div>
     </div>
     <div class="form-group row form-check">
@@ -100,47 +100,15 @@
             <button name="submit" type="submit">Submit</button>
         </div>
     </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-2" for="button">Click</label>
-        <div class="col-md-offset-2 col-md-10">
-            <button name="button" onclick="clicked()" type="button">Click</button>
-        </div>
-    </div>
 </form>
 
 
 <script type="text/javascript">
-
-    function clicked() {
-        console.log('clicked');
-    }
-
     function check() {
         if(document.getElementById('second_parent').checked == true) {
-            console.log('true');
-            $('#first_name').disabled = true;
-            $('#middle_name').attr('disabled', true);
-            $('#last_name').attr('disabled', true);
-            $('#carrier').attr('disabled', true);
-            $('#phone_number').attr('disabled', true);
-            $('#email').attr('disabled', true);
-            $('#emailing').attr("disabled","disabled");
-            $('#texting').attr("disabled","disabled");
-            $('#guardian').attr('disabled', true);
-            $('#notes').attr('disabled', true);
+            $('.disable').attr("disabled","disabled");
         } else {
-            console.log('false');
-            $('#first_name').removeAttr('disabled');
-            $('#middle_name').removeAttr('disabled');
-            $('#last_name').removeAttr('disabled');
-            $('#carrier').removeAttr('disabled');
-            $('#phone_number').removeAttr('disabled');
-            $('#email').removeAttr('disabled');
-            $('#emailing').removeAttr('disabled');
-            $('#texting').removeAttr('disabled');
-            $('#guardian').removeAttr('disabled');
-            $('#notes').removeAttr('disabled');
+            $('.disable').removeAttr("disabled");
         }
     }
 </script>

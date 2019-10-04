@@ -68,40 +68,39 @@ def render_parent_form2():
         'notes': request.form['notes']
     }
     print(parent1)
-    return render_template('addparent2.html')
+    return render_template('addparent2.html', parent1=parent1)
 
 
 @app.route('/student/form', methods=['POST'])
 def render_student_form():
-    # parent1 = request.form['parent1']
-    # parent2 = None
-    # if(request.form['p2']):
-    #     parent2 = {
-    #         'first_name': request.form['first_name'],
-    #         'middle_name': request.form['middle_name'],
-    #         'last_name': request.form['last_name'],
-    #         'carrier': request.form['carrier'],
-    #         'phone_number': request.form['phone_number'],
-    #         'email': request.form['email'],
-    #         'emailing': request.form['emailing'],
-    #         'texting': request.form['texting'],
-    #         'guardian': request.form['guardian'],
-    #         'notes': request.form['notes']
-    #     }
-    # if(request.form[new_student]):
-    #     student = {
-    #         "parent_1_id": request.form["parent_1_id"],
-    #         "parent_2_id": request.form["parent_2_id"],
-    #         "student_id": request.form["student_id"],
-    #         "first_name": request.form["first_name"],
-    #         "middle_name": request.form["middle_name"],
-    #         "last_name": request.form["last_name"],
-    #         "math": request.form["math"],
-    #         "reading": request.form["reading"],
-    #         "notes": request.form["notes"],
-    #         "qrcode": request.form["qrcode"]
-    #     }
-    #     students.append(student)
+    parent1 = request.form['parent1']
+    parent2 = []
+    if(request.form['second_parent'] == 1):
+        parent2 = {
+            'first_name': request.form['first_name'],
+            'middle_name': request.form['middle_name'],
+            'last_name': request.form['last_name'],
+            'carrier': request.form['carrier'],
+            'phone_number': request.form['phone_number'],
+            'email': request.form['email'],
+            'emailing': request.form['emailing'],
+            'texting': request.form['texting'],
+            'guardian': request.form['guardian'],
+            'notes': request.form['notes']
+        }
+        student = {
+            "parent_1_id": request.form["parent_1_id"],
+            "parent_2_id": request.form["parent_2_id"],
+            "student_id": request.form["student_id"],
+            "first_name": request.form["first_name"],
+            "middle_name": request.form["middle_name"],
+            "last_name": request.form["last_name"],
+            "math": request.form["math"],
+            "reading": request.form["reading"],
+            "notes": request.form["notes"],
+            "qrcode": request.form["qrcode"]
+        }
+        students.append(student)
     # may need some logic in rendering this form more than once for adding more than 1 student at a time
     return render_template('addstudent.html')
 
