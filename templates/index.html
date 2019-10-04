@@ -26,7 +26,9 @@
         </tr>
         {% for student in students %}
         <tr>
-            <td>{{student[1]}}</td>
+            <!-- create student page template and render function -->
+            <td><a href="/student/page/{{student[10]}}">{{student[1]}}</a></td>
+            <!-- create parent 1 & 2 page template and render function -->
             <td>{{student[2]}}</td>
             <td>{{student[3]}}</td>
             <td>{{student[4]}}</td>
@@ -57,7 +59,11 @@
                 {% else %}
                 <strong>Checked In</strong>
                 {% endif %}
-                <button type="button" name="button">Edit</button>
+                <!-- be able to edit without reloading page, only row -->
+                <form action="/student/edit" method="post">
+                    <input type="text" name="qrcode" value="{{student[10]}}" hidden>
+                    <button type="button" name="button">Edit</button>
+                </form>
             </td>
         </tr>
         {% endfor %}

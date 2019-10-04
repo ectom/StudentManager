@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../static/student.css">
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <title>Add Student</title>
+    </head>
+    <body>
+        <form class="form-horizontal" id="student_form" action="/confirm" method="post">
+            <div class="form-group">
+                <label class="control-label col-md-2" for="student_id">Student ID</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="student_id" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="first_name">First Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="first_name" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="middle_name">Middle Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="middle_name" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="last_name">Last Name</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="last_name" value="">
+                </div>
+            </div>
+            <div class="form-group row form-check">
+                <label for="math">Math
+                    <input type="checkbox" class="form-check-input" id="math" name="math" for="math"  value='1'>
+                    <span for="math"></span>
+                </label>
+                <label for="reading">Reading
+                    <input type="checkbox" class="form-check-input" id="reading" name="reading" for="reading"  value='1'>
+                    <span for="reading"></span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="notes">Notes</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="textarea" name="notes" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="qrcode">QR Code</label>
+                <div class="col-md-10">
+                    <input class="form-control" type="text" name="qrcode" value="">
+                </div>
+            </div>
+            <div class="form-group row form-check">
+                <label for="new_student">Add Another Student
+                    <input class="form-check-input" for="new_student" onchange="anotherStudent()" id="new_student" name="new_student" type="checkbox">
+                    <span for="new_student"></span>
+                </label>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" name="submit">Submit</button>
+                </div>
+            </div>
+            <input type="hidden" name="parent1" value="{{parent1}}">
+            <input type="hidden" name="parent2" value="{{parent2}}">
+            {% if students %}
+            <input type="hidden" name="students" value="{{students}}">
+            {% endif %}
+        </form>
+        <script type="text/javascript">
+            function anotherStudent() {
+                if($('#new_student')[0].checked == true) {
+                    $('#student_form').attr('action', '/student/form/again');
+                    console.log('student', $('#student_form').attr('action'));
+                } else {
+                    $('#student_form').attr('action', '/confirm');
+                    console.log('confirm', $('#student_form').attr('action'));
+                }
+            }
+        </script>
+    </body>
+</html>
