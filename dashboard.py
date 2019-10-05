@@ -67,7 +67,6 @@ def render_parent_form2():
         'guardian': request.form['guardian'],
         'notes': request.form['notes']
     }
-    print(parent1)
     return render_template('addparent2.html', parent1=parent1)
 
 
@@ -96,7 +95,7 @@ def render_student_form():
 def render_student_form_again():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
-    students = eval(request.form.get('students'))
+    students = request.form.get('students')
     if students == None:
         students = []
     student = {
@@ -111,6 +110,8 @@ def render_student_form_again():
         "notes": request.form.get("notes"),
         "qrcode": request.form.get("qrcode")
     }
+    if type(students) == type(str):
+        students = eval(students)
     students.append(student)
     return render_template('addstudent.html', parent1=parent1, parent2=parent2, students=students)
 
@@ -139,6 +140,7 @@ def confirm_form():
 
 
 # --------------------------------- Internal Functions ----------------------------------------
+
 
 def connect():
     mydb = mysql.connector.connect(
@@ -197,14 +199,21 @@ def edit_SQL_statement(data):
     return sql
 
 
+# Adds Both parents and all students to the database
 @app.route('/processing', methods=['POST'])
 def processing():
     parent1 = request.form.get('parent1')
     parent2 = request.form.get('parent2')
-    students = eval(request.form.getlist('students')[0])
-    mydb = connect()
-    p1_id = add_parent() # fix this flow along with student
-    # TODO put parents into db then add their ids to students. Then add students to db
+    students = eval(request.form.get('students'))
+    p1_id = add_parent(parent1)
+    try:
+        p2_id = add_parent(parent2)
+    except SyntaxError:
+        p2_id = None
+    for student in students:
+        student['parent_1_id'] = p1_id
+        student['parent_2_id'] = p2_id
+        add_student(student)
     return redirect('/')
 
 
@@ -232,32 +241,20 @@ def get_parent(parent_id):
         return 404
 
 
-@app.route('/parent/add', methods=['POST'])
-def add_parent():
-    data = {
-        "first": request.form["first"],
-        "middle": request.form["middle"],
-        "last": request.form["last"],
-        "carrier": request.form["carrier"],
-        "phone_number": request.form["phone_number"],
-        "email": request.form["email"],
-        "messaging": request.form["messaging"],
-        "emailing": request.form["emailing"],
-        "guardian": request.form["guardian"],
-        "notes": request.form["notes"]
-    }
+def add_parent(parent_data):
+    data = eval(parent_data)
     print(data)
     mydb = connect()
     try:
         mycursor = mydb.cursor()
         sql = "INSERT INTO `mydb`.`parents` (`first_name`, `middle_name`, `last_name`, `carrier`, `phone_number`, " \
               "`email`, `messaging`, `emailing`, `guardian`, `notes`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s); "
-        val = (data['first'], data['middle'], data['last'], data['carrier'], data['phone_number'], data['email'],
-               data['messaging'], data['emailing'], data['guardian'], data['notes'])
+        val = (data['first_name'], data['middle_name'], data['last_name'], data['carrier'], data['phone_number'], data['email'],
+               data['texting'], data['emailing'], data['guardian'], data['notes'])
         mycursor.execute(sql, val)
-        print("Parent Table: successfully inserted", data['first'], data['last'])
+        print("Parent Table: successfully inserted", data['first_name'], data['last_name'])
         mydb.commit()
-        return jsonify(mycursor.lastrowid)
+        return mycursor.lastrowid
     except mysql.connector.Error as error:
         mydb.rollback()
         print("Failed inserting record into parent table: {}".format(error))
@@ -393,20 +390,21 @@ def get_student(qrcode):
         return 404
 
 
-@app.route('/student/add', methods=['POST'])
-def add_student():
-    data = {
-        "parent_1_id": request.form["parent_1_id"],
-        "parent_2_id": request.form["parent_2_id"],
-        "student_id": request.form["student_id"],
-        "first_name": request.form["first_name"],
-        "middle_name": request.form["middle_name"],
-        "last_name": request.form["last_name"],
-        "math": request.form["math"],
-        "reading": request.form["reading"],
-        "notes": request.form["notes"],
-        "qrcode": request.form["qrcode"]
-    }
+def add_student(student_data):
+    data = student_data
+    print('data', data)
+    # data = {
+    #     "parent_1_id": request.form["parent_1_id"],
+    #     "parent_2_id": request.form["parent_2_id"],
+    #     "student_id": request.form["student_id"],
+    #     "first_name": request.form["first_name"],
+    #     "middle_name": request.form["middle_name"],
+    #     "last_name": request.form["last_name"],
+    #     "math": request.form["math"],
+    #     "reading": request.form["reading"],
+    #     "notes": request.form["notes"],
+    #     "qrcode": request.form["qrcode"]
+    # }
     mydb = connect()
     try:
         mycursor = mydb.cursor()

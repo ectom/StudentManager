@@ -21,6 +21,15 @@
 <body>
         <p>Parent 1: {{parent1}}</p>
         <p>Parent 2: {{parent2}}</p>
-        <p>Students: {{students}}</p>
+        <p>Students:</p>
+        {% for student in students %}
+        <p>{{student}}</p>
+        {% endfor %}
+        <form class="" action="/processing" method="post">
+            <input type="hidden" name="parent1" value="{{parent1}}">
+            <input type="hidden" name="parent2" value="{{parent2}}">
+            <input type="hidden" name="students" value="{{students}}">
+            <button type="submit" name="button">Confirm</button>
+        </form>
 </body>
 </html>

@@ -103,16 +103,14 @@
 </form>
 <script type="text/javascript">
     function check() {
-        if(document.getElementById('second_parent').checked == true) {
-            $('.disable').attr("disabled","disabled");
-            $('#another_parent').val(false);
-            console.log($('#another_parent').val());
-            console.log("hello");
+        var $another_parent = $('#another_parent');
+        var $disable = $('.disable');
+        if(document.getElementById('second_parent').checked === true) {
+            $disable.attr("disabled","disabled");
+            $another_parent.val(false);
         } else {
-            $('.disable').removeAttr('disabled');
-            $('#another_parent').val(true);
-            console.log($('#another_parent').val());
-            console.log('hello');
+            $disable.removeAttr('disabled');
+            $another_parent.val(true);
         }
     }
 </script>
