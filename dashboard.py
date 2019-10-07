@@ -5,6 +5,7 @@ import mysql.connector
 from PIL import Image
 from flask import Flask, render_template, request, redirect
 from flask import jsonify
+
 # from pyzbar.pyzbar import decode
 
 app = Flask(__name__)
@@ -118,8 +119,10 @@ def render_student_form_again():
 
 @app.route('/confirm', methods=['POST'])
 def confirm_form():
-    parent1 = request.form.get('parent1')
+    parent1 = eval(request.form.get('parent1'))
     parent2 = request.form.get('parent2')
+    if parent2 != 'No Second Parent':
+        parent2 = eval(parent2)
     students = eval(request.form.getlist('students')[0])
     if students is None:
         students = []
@@ -249,7 +252,8 @@ def add_parent(parent_data):
         mycursor = mydb.cursor()
         sql = "INSERT INTO `mydb`.`parents` (`first_name`, `middle_name`, `last_name`, `carrier`, `phone_number`, " \
               "`email`, `messaging`, `emailing`, `guardian`, `notes`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s); "
-        val = (data['first_name'], data['middle_name'], data['last_name'], data['carrier'], data['phone_number'], data['email'],
+        val = (data['first_name'], data['middle_name'], data['last_name'], data['carrier'], data['phone_number'],
+               data['email'],
                data['texting'], data['emailing'], data['guardian'], data['notes'])
         mycursor.execute(sql, val)
         print("Parent Table: successfully inserted", data['first_name'], data['last_name'])
