@@ -32,7 +32,6 @@ def index():
 
 @app.route('/student/page/<qrcode>', methods=['GET'])
 def student_page(qrcode):
-    # get student info here
     student = get_student(qrcode)
     if student == 404:
         return render_template('student404.html')
@@ -41,12 +40,6 @@ def student_page(qrcode):
     if student[3]:
         parent2 = get_parent(student[3])
     return render_template('student.html', student=student, parent1=parent1, parent2=parent2)
-
-
-@app.route('/parent/page/<parent>', methods=['GET'])
-def parent_page(parent):
-    parent = parent
-    return render_template('parent.html')
 
 
 @app.route('/parent/form1', methods=['GET'])
@@ -142,6 +135,20 @@ def confirm_form():
     return render_template('confirm.html', parent1=parent1, parent2=parent2, students=students)
 
 
+@app.route('/parent/dash', methods=['GET'])
+def parent_dash():
+    parents = get_all_parents()
+    print(parents)
+    return render_template('parent_dash.html', parents=parents)
+
+
+@app.route('/parent/page/<parent_id>', methods=['GET'])
+def parent_page(parent_id):
+    parent = get_parent(parent_id)
+    students = get_student_by_pid(parent_id)
+    return render_template('parent.html', parent=parent, students=students)
+
+
 # --------------------------------- Internal Functions ----------------------------------------
 
 
@@ -228,10 +235,9 @@ def get_all_parents():
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM parents")
     parents = mycursor.fetchall()
-    return jsonify(parents), 200
+    return parents
 
 
-@app.route('/parent/one/<parent_id>', methods=['GET'])
 def get_parent(parent_id):
     try:
         mydb = connect()
@@ -390,6 +396,18 @@ def get_student(qrcode):
         mycursor.execute(sql)
         student = mycursor.fetchone()
         return student
+    except mysql.connector.Error as error:
+        return 404
+
+
+def get_student_by_pid(pid):
+    try:
+        mydb = connect()
+        mycursor = mydb.cursor()
+        sql = "SELECT * FROM students WHERE parent_1_id=%s OR parent_2_id=%s" % (pid, pid)
+        mycursor.execute(sql)
+        students = mycursor.fetchall()
+        return students
     except mysql.connector.Error as error:
         return 404
 
