@@ -1,3 +1,4 @@
+const Database = require('./models/mydb');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -8,8 +9,10 @@ const url = require('url');
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({ width: 800, height: 600 });
+  const db = new Database();
+  db.createDB();
   
+  mainWindow = new BrowserWindow({ width: 1000, height: 800 });
   mainWindow.loadURL(
     process.env.ELECTRON_START_URL ||
     url.format({
