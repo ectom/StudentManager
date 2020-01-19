@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-// import Database from '../models/mydb';
+import StudentController from '../controllers/student';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -78,11 +78,35 @@ export default function StudentTable() {
     } )
   }
   
-  function checkIn( student_id ) {
-    console.log( student_id )
+  function checkIn( data ) {
+    const stu = new StudentController();
+    const student = {
+      student_id: 1231241536,
+      first_name: 'john',
+      middle_name: 'lee',
+      last_name: 'fox',
+      math: true,
+      reading: false,
+      notes: 'student test',
+      parent1_id: 1,
+      parent2_id: 2
+      // student_id: data.student_id,
+      // first_name: data.first_name,
+      // middle_name: data.middle_name,
+      // last_name: data.last_name,
+      // math: data.math,
+      // reading: data.reading,
+      // notes: data.notes,
+      // parent1_id: data.parent1_id,
+      // parent2_id: data.parent2_id
+    };
+    stu.addStudent(student);
     // TODO update checkIn field to true
   }
   
+  function chewckIn( student_id ) {
+    console.log( student_id )
+  }
   const components = {
     Action: props => {
       if ( !props.data.checkIn ) {

@@ -1,4 +1,4 @@
-import Database from '../models/mydb';
+const Database = require('../models/mydb');
 
 class StudentController {
   constructor(){
@@ -6,27 +6,31 @@ class StudentController {
   }
   
   addStudent(student) {
-    const keys = student.keys();
-    const values = student.values();
+    console.log(student)
+    const keys = Object.keys(student);
+    const values = Object.values(student);
     let cols = '(';
     let vals = '(';
     for(let i = 0; i < keys.length; i++){
       if(values[i] === '') {
         continue;
       }
-      cols += keys[i] + ',';
-      vals += values[i] + ',';
+      cols += keys[i] + ",";
+      console.log(typeof(values[i]))
+      if(typeof(values[i]) === 'string'){
+        vals += "'" + values[i] + "',";
+      } else {
+        vals += values[i] + ',';
+      }
     }
-    cols = cols.substring(0, cols.length - 1);
-    vals = vals.substring(0, vals.length - 1);
-    cols += ')';
-    vals += ')';
-    console.log(cols, vals);
-    
-    const sql = 'INSERT INTO students ' +
-      '(student_id, first_name, middle_name, last_name, math, reading, notes, parent1_id, parent2_id, creation_date) ' +
-      'VALUES (value1, value2, value3, ...)'
-    // this.mydb.query()
+    cols += 'created)';
+    vals += 'NOW())';
+    const sql = 'INSERT INTO students ' + cols + ' VALUES ' + vals + ';';
+    console.log(sql)
+    this.mydb.query(sql, (err, result) => {
+      if (err) throw err;
+      console.log(result);
+    })
   }
   
   editStudent() {
@@ -42,4 +46,4 @@ class StudentController {
   }
 }
 
-export default StudentController
+module.exports = StudentController;

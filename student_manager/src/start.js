@@ -1,4 +1,5 @@
 const Database = require('./models/mydb');
+const StudentController = require('./controllers/student');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
