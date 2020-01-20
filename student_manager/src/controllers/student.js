@@ -1,12 +1,18 @@
 const Database = require('../models/mydb');
+const mysql = require('mysql');
 
-class StudentController {
-  constructor(){
-    this.mydb = new Database().mydb;
-  }
-  
-  addStudent(student) {
-    console.log(student)
+const mydb = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "mydb"
+});
+
+// TODO turn into module exports instead of class.
+
+
+module.exports = {
+  addStudent: function(student) {
     const keys = Object.keys(student);
     const values = Object.values(student);
     let cols = '(';
@@ -16,7 +22,6 @@ class StudentController {
         continue;
       }
       cols += keys[i] + ",";
-      console.log(typeof(values[i]))
       if(typeof(values[i]) === 'string'){
         vals += "'" + values[i] + "',";
       } else {
@@ -26,24 +31,24 @@ class StudentController {
     cols += 'created)';
     vals += 'NOW())';
     const sql = 'INSERT INTO students ' + cols + ' VALUES ' + vals + ';';
-    console.log(sql)
-    this.mydb.query(sql, (err, result) => {
+    mydb.connect((err) => {
       if (err) throw err;
-      console.log(result);
-    })
-  }
-  
-  editStudent() {
+      mydb.query(sql, (err, result) => {
+        if (err) throw err;
+        console.log("Result: " + result);
+      });
+    });
+    // mydb.query(sql);
+    mydb.end();
+  },
+  editStudent: function(req, res) {
+    return
+  },
+  deleteStudent: function(req, res) {
+    return
+  },
+  getStudent: function(req, res) {
     return
   }
   
-  deleteStudent() {
-    return
-  }
-  
-  getStudent() {
-    return
-  }
 }
-
-module.exports = StudentController;

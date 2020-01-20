@@ -1,5 +1,4 @@
 const Database = require('./models/mydb');
-const StudentController = require('./controllers/student');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -10,8 +9,6 @@ const url = require('url');
 let mainWindow;
 
 function createWindow() {
-  const db = new Database();
-  db.createDB();
   
   mainWindow = new BrowserWindow({ width: 1000, height: 800 });
   mainWindow.loadURL(
@@ -37,6 +34,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
+  Database.createDB();
   if (mainWindow === null) {
     createWindow();
   }

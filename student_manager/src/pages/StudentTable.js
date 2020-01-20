@@ -78,8 +78,9 @@ export default function StudentTable() {
     } )
   }
   
+  
+  // TODO make this the update function once working
   function checkIn( data ) {
-    const stu = new StudentController();
     const student = {
       student_id: 1231241536,
       first_name: 'john',
@@ -100,10 +101,11 @@ export default function StudentTable() {
       // parent1_id: data.parent1_id,
       // parent2_id: data.parent2_id
     };
-    stu.addStudent(student);
+    StudentController.addStudent(student);
     // TODO update checkIn field to true
   }
   
+  // TODO make checkin function
   function chewckIn( student_id ) {
     console.log( student_id )
   }
