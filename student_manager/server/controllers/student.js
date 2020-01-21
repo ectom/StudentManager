@@ -1,7 +1,7 @@
 const Database = require('../models/mydb');
 const mysql = require('mysql');
 
-const mydb = mysql.createConnection({
+const mydb = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "password",
@@ -12,7 +12,8 @@ const mydb = mysql.createConnection({
 
 
 module.exports = {
-  addStudent: function(student) {
+  addStudent: function(req, res) {
+    const student = req.body.data;
     const keys = Object.keys(student);
     const values = Object.values(student);
     let cols = '(';
@@ -31,15 +32,13 @@ module.exports = {
     cols += 'created)';
     vals += 'NOW())';
     const sql = 'INSERT INTO students ' + cols + ' VALUES ' + vals + ';';
-    mydb.connect((err) => {
+    mydb.getConnection((err, connection) => {
       if (err) throw err;
-      mydb.query(sql, (err, result) => {
+      connection.query(sql, (err) => {
+        connection.release();
         if (err) throw err;
-        console.log("Result: " + result);
       });
     });
-    // mydb.query(sql);
-    mydb.end();
   },
   editStudent: function(req, res) {
     return
