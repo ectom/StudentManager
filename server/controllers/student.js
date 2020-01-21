@@ -48,6 +48,17 @@ module.exports = {
   },
   getStudent: function(req, res) {
     return
+  },
+  checkIn: function(req, res) {
+    console.log(req.body.data)
+    const sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + req.body.data + ', NOW());';
+    mydb.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(sql, (err) => {
+        connection.release();
+        if (err) throw err;
+      });
+    });
   }
   
 }

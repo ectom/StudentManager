@@ -51,7 +51,7 @@ export default function StudentTable(props) {
     ],
     data: [
       {
-        student_id: 1,
+        student_id: 1231241536,
         first_name: 'Jonah',
         middle_name: 'Steven',
         last_name: 'Lee',
@@ -78,35 +78,6 @@ export default function StudentTable(props) {
     } )
   }
   
-  
-  // TODO make this the update function once working
-  function checkIn( data ) {
-    const student = {
-      student_id: 1231241536,
-      first_name: 'john',
-      middle_name: 'lee',
-      last_name: 'fox',
-      math: true,
-      reading: false,
-      notes: 'student test',
-      parent1_id: 1,
-      parent2_id: 2
-      // student_id: data.student_id,
-      // first_name: data.first_name,
-      // middle_name: data.middle_name,
-      // last_name: data.last_name,
-      // math: data.math,
-      // reading: data.reading,
-      // notes: data.notes,
-      // parent1_id: data.parent1_id,
-      // parent2_id: data.parent2_id
-    };
-    doPost( '/student/add', student ).then( res  => console.log(res));
-    
-    // StudentController.addStudent(student);
-    // TODO update checkIn field to true
-  }
-  
   async function doPost(path, data) {
     const response = await fetch(path, {
       method: 'POST',
@@ -124,6 +95,7 @@ export default function StudentTable(props) {
     return body;
   }
   
+  // TODO GET method cannot have body
   async function doGet(path, data=null) {
     let response;
     let body;
@@ -152,10 +124,36 @@ export default function StudentTable(props) {
     return body;
   }
   
-  // TODO make checkin function
-  function chewckIn( student_id ) {
-    console.log( student_id )
+  function addStudent( data ) {
+    const student = {
+      // student_id: 1231241536,
+      // first_name: 'john',
+      // middle_name: 'lee',
+      // last_name: 'fox',
+      // math: true,
+      // reading: false,
+      // notes: 'student test',
+      // parent1_id: 1,
+      // parent2_id: 2
+      student_id: data.student_id,
+      first_name: data.first_name,
+      middle_name: data.middle_name,
+      last_name: data.last_name,
+      math: data.math,
+      reading: data.reading,
+      notes: data.notes,
+      parent1_id: data.parent1_id,
+      parent2_id: data.parent2_id
+    };
+    doPost( '/student/add', student ).then( res  => console.log(res));
   }
+  
+  // TODO make checkin function
+  function checkIn( student_id ) {
+    console.log( student_id )
+    doPost('/student/checkIn', student_id)
+  }
+  
   const components = {
     Action: props => {
       if ( !props.data.checkIn ) {
