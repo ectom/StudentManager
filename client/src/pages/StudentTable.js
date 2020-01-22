@@ -151,7 +151,10 @@ export default function StudentTable(props) {
   // TODO make checkin function
   function checkIn( student_id ) {
     console.log( student_id )
-    doPost('/student/checkIn', student_id)
+    const checkedIn = doPost('/student/checkIn', student_id)
+    if(checkedIn === ' Checked In') {
+      this.setState({data.checkIn: true});
+    }
   }
   
   const components = {

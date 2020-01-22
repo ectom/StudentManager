@@ -31,7 +31,7 @@ module.exports = {
     }
     cols += 'created)';
     vals += 'NOW())';
-    const sql = 'INSERT INTO students ' + cols + ' VALUES ' + vals + ';';
+    const sql = 'INSERT INTO students ' + mysql.escape(cols) + ' VALUES ' + mysql.escape(vals) + ';';
     mydb.getConnection((err, connection) => {
       if (err) throw err;
       connection.query(sql, (err) => {
@@ -51,14 +51,26 @@ module.exports = {
   },
   checkIn: function(req, res) {
     console.log(req.body.data)
-    const sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + req.body.data + ', NOW());';
+    const sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape(req.body.data) + ';';
     mydb.getConnection((err, connection) => {
       if (err) throw err;
-      connection.query(sql, (err) => {
+      connection.query(sql, (err, results) => {
         connection.release();
         if (err) throw err;
+        if (results) {
+          res.send('Already Checked In')
+          return;
+        } else {
+          sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape(req.body.data) + ', NOW());';
+          mydb.getConnection((err, connection) => {
+            if (err) throw err;
+            connection.query(sql, (err) => {
+              connection.release();
+              if (err) throw err;
+            });
+          });
+        }
       });
     });
   }
-  
 }
