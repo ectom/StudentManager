@@ -1,4 +1,3 @@
-const Database = require('../models/mydb');
 const mysql = require('mysql');
 
 const mydb = mysql.createPool({
@@ -41,36 +40,36 @@ module.exports = {
     });
   },
   editStudent: function(req, res) {
-    return
+  
   },
   deleteStudent: function(req, res) {
-    return
+  
   },
   getStudent: function(req, res) {
-    return
+  
   },
   checkIn: function(req, res) {
-    console.log(req.body.data)
-    const sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape(req.body.data) + ';';
-    mydb.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(sql, (err, results) => {
+    console.log( req.body.data );
+    let sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req.body.data ) + ';';
+    mydb.getConnection( ( err, connection ) => {
+      if ( err ) throw err;
+      connection.query( sql, ( err, results ) => {
         connection.release();
-        if (err) throw err;
-        if (results) {
-          res.send('Already Checked In')
-          return;
+        if ( err ) throw err;
+        if ( results ) {
+          res.send( 'Already Checked In' );
+        
         } else {
-          sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape(req.body.data) + ', NOW());';
-          mydb.getConnection((err, connection) => {
-            if (err) throw err;
-            connection.query(sql, (err) => {
+          sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape( req.body.data ) + ', NOW());';
+          mydb.getConnection( ( err, connection ) => {
+            if ( err ) throw err;
+            connection.query( sql, ( err ) => {
               connection.release();
-              if (err) throw err;
-            });
-          });
+              if ( err ) throw err;
+            } );
+          } );
         }
-      });
-    });
+      } );
+    } );
   }
-}
+};
