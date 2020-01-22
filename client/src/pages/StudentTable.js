@@ -1,5 +1,4 @@
-import React, { forwardRef } from 'react';
-// import StudentController from '../../server/controllers/student';
+import React, { Component, forwardRef } from 'react';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -18,9 +17,36 @@ import Search from '@material-ui/icons/Search';
 import { Button, Typography } from '@material-ui/core';
 
 
-export default function StudentTable(props) {
+export default class StudentTable extends Component {
+  constructor( props ) {
+    super( props );
+    this.state = {
+      columns: [
+        { title: 'Student ID', field: 'student_id' },
+        { title: 'First', field: 'first_name' },
+        { title: 'Middle', field: 'middle_name' },
+        { title: 'Last Name', field: 'last_name' },
+        { title: 'Math', field: 'math' },
+        { title: 'Reading', field: 'reading' },
+        { title: 'Attendance', field: 'attendance' }
+      ],
+      data: [
+        {
+          student_id: 1231241536,
+          first_name: 'Jonah',
+          middle_name: 'Steven',
+          last_name: 'Lee',
+          math: 'true',
+          reading: 'false',
+          attendance: 'here',
+          checkIn: false,
+          checkOut: false
+        }
+      ],
+    }
+  }
   
-  const tableIcons = {
+  tableIcons = {
     Add: forwardRef( ( props, ref ) => <AddBox {...props} ref={ref}/> ),
     Check: forwardRef( ( props, ref ) => <Check {...props} ref={ref}/> ),
     Clear: forwardRef( ( props, ref ) => <Clear {...props} ref={ref}/> ),
@@ -39,37 +65,11 @@ export default function StudentTable(props) {
     ThirdStateCheck: forwardRef( ( props, ref ) => <Remove {...props} ref={ref}/> ),
   };
   
-  const [state, setState] = React.useState( {
-    columns: [
-      { title: 'Student ID', field: 'student_id' },
-      { title: 'First', field: 'first_name' },
-      { title: 'Middle', field: 'middle_name' },
-      { title: 'Last Name', field: 'last_name' },
-      { title: 'Math', field: 'math' },
-      { title: 'Reading', field: 'reading' },
-      { title: 'Attendance', field: 'attendance' }
-    ],
-    data: [
-      {
-        student_id: 1231241536,
-        first_name: 'Jonah',
-        middle_name: 'Steven',
-        last_name: 'Lee',
-        math: 'true',
-        reading: 'false',
-        attendance: 'here',
-        checkIn: false,
-        checkOut: false
-      }
-    ],
-  } );
-  
-  // eslint-disable-next-line no-unused-vars
-  function onRowDelete( oldData ) {
+  onRowDelete( oldData ) {
     new Promise( resolve => {
       setTimeout( () => {
         resolve();
-        setState( prevState => {
+        this.setState( prevState => {
           const data = [...prevState.data];
           data.splice( data.indexOf( oldData ), 1 );
           return { ...prevState, data };
@@ -78,15 +78,15 @@ export default function StudentTable(props) {
     } )
   }
   
-  async function doPost(path, data) {
-    const response = await fetch(path, {
+  async doPost( path, data ) {
+    const response = await fetch( path, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({data: data})
-    });
+      body: JSON.stringify( { data: data } )
+    } );
     const body = await response.json();
     
     if (response.status !== 200) {
@@ -96,17 +96,17 @@ export default function StudentTable(props) {
   }
   
   // TODO GET method cannot have body
-  async function doGet(path, data=null) {
+  async doGet( path, data = null ) {
     let response;
     let body;
-    if(data){
-      response = await fetch(path, {
+    if ( data ) {
+      response = await fetch( path, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({data: data})
+        body: JSON.stringify( { data: data } )
       });
     } else {
       response = await fetch(path, {
@@ -124,7 +124,7 @@ export default function StudentTable(props) {
     return body;
   }
   
-  function addStudent( data ) {
+  addStudent( info ) {
     const student = {
       // student_id: 1231241536,
       // first_name: 'john',
@@ -135,34 +135,36 @@ export default function StudentTable(props) {
       // notes: 'student test',
       // parent1_id: 1,
       // parent2_id: 2
-      student_id: data.student_id,
-      first_name: data.first_name,
-      middle_name: data.middle_name,
-      last_name: data.last_name,
-      math: data.math,
-      reading: data.reading,
-      notes: data.notes,
-      parent1_id: data.parent1_id,
-      parent2_id: data.parent2_id
+      student_id: info.student_id,
+      first_name: info.first_name,
+      middle_name: info.middle_name,
+      last_name: info.last_name,
+      math: info.math,
+      reading: info.reading,
+      notes: info.notes,
+      parent1_id: info.parent1_id,
+      parent2_id: info.parent2_id
     };
-    doPost( '/student/add', student ).then( res  => console.log(res));
+    this.doPost( '/student/add', student ).then( res => console.log( res ) );
   }
   
   // TODO make checkin function
-  function checkIn( student_id ) {
-    console.log( student_id )
-    const checkedIn = doPost('/student/checkIn', student_id)
-    if(checkedIn === ' Checked In') {
-      this.setState({data.checkIn: true});
+  checkIn( student_id ) {
+    console.log( student_id );
+    const checkedIn = this.doPost( '/student/checkIn', student_id );
+    if ( checkedIn === ' Checked In' ) {
+      let data = this.state.data;
+      data.checkIn = true;
+      this.setState( { data: data } );
     }
   }
   
-  const components = {
+  components = {
     Action: props => {
       if ( !props.data.checkIn ) {
         return (
           <Button
-            onClick={() => checkIn( props.data.student_id )}
+            onClick={() => this.checkIn( props.data.student_id )}
             color="primary"
             variant="contained"
             style={{ height: 35, width: 110 }}
@@ -174,7 +176,7 @@ export default function StudentTable(props) {
       if ( props.data.checkIn && !props.data.checkOut ) {
         return (
           <Button
-            onClick={() => checkIn( props.data.student_id )}
+            onClick={() => this.checkIn( props.data.student_id )}
             color="primary"
             variant="contained"
             style={{ height: 35, width: 110 }}
@@ -186,20 +188,22 @@ export default function StudentTable(props) {
     }
   };
   
-  return (
-    <>
-    <MaterialTable
-      icons={tableIcons}
-      title="Students"
-      columns={state.columns}
-      data={state.data}
-      options={{ actionsColumnIndex: -1 }}
-      components={components}
-      actions={[
-        { icon: 'checkIn' },
-      ]}
-    />
-    <Typography>{props.data}</Typography>
-    </>
-  );
+  render() {
+    return (
+      <>
+        <MaterialTable
+          icons={this.tableIcons}
+          title="Students"
+          columns={this.state.columns}
+          data={this.state.data}
+          options={{ actionsColumnIndex: -1 }}
+          components={this.components}
+          actions={[
+            { icon: 'checkIn' },
+          ]}
+        />
+        <Typography>{this.props.data}</Typography>
+      </>
+    );
+  }
 }
