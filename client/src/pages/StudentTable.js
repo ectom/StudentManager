@@ -43,7 +43,9 @@ export default class StudentTable extends Component {
           checkOut: false
         }
       ],
+      students: [],
     };
+    this.getAllStudents();
     this.doGet = this.doGet.bind( this );
     this.doPost = this.doPost.bind( this );
   }
@@ -117,13 +119,19 @@ export default class StudentTable extends Component {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         }
-      });
+      } );
       body = await response.json();
     }
-    if (response.status !== 200) {
-      throw Error(body.message)
+    if ( response.status !== 200 ) {
+      throw Error( body.message )
     }
     return body;
+  }
+  
+  getAllStudents() {
+    this.doGet( '/student/getAll' ).then( ( result ) => {
+      this.setState( { students: result } )
+    } );
   }
   
   addStudent( info ) {
@@ -153,11 +161,10 @@ export default class StudentTable extends Component {
   // TODO make checkin function
   checkIn( student_id ) {
     console.log( student_id );
-    const checkedIn = null;
+    let checkedIn = null;
     this.doPost( '/student/checkIn', student_id ).then( ( response ) => {
-      console.log( response )
+      checkedIn = response.message;
     } );
-    console.log( checkedIn );
     if ( checkedIn === ' Checked In' ) {
       let data = this.state.data;
       data.checkIn = true;
