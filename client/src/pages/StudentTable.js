@@ -114,6 +114,12 @@ export default class StudentTable extends Component {
     return body;
   }
   
+  getStudent(student_id) {
+    this.doPost('/student/getOne', student_id ).then( ( result ) => {
+      console.log('Got student: ' + result);
+    })
+  }
+  
   getAllStudents() {
     this.doGet( '/student/getAll' ).then( ( result ) => {
       this.setState( { students: result.students } )

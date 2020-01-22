@@ -9,7 +9,15 @@ const mydb = mysql.createPool( {
 
 module.exports = {
   getStudent: function ( req, res ) {
-  
+    mydb.getConnection( ( err, connection ) => {
+      if ( err ) throw err;
+      const sql = 'SELECT * FROM students WHERE student_id=' + mysql.escape(req.body.data) + ';';
+      connection.query(sql, ( err, result ) => {
+        connection.release();
+        if ( err ) throw err;
+        res.send( { student: result } );
+      } );
+    } );
   },
   getStudents: function ( req, res ) {
     mydb.getConnection( ( err, connection ) => {
