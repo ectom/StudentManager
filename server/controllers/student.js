@@ -7,9 +7,6 @@ const mydb = mysql.createPool( {
   database: "mydb"
 } );
 
-// TODO turn into module exports instead of class.
-
-
 module.exports = {
   getStudent: function ( req, res ) {
   
@@ -59,7 +56,7 @@ module.exports = {
   deleteStudent: function ( req, res ) {
   
   },
-  // TODO not conviced that this is completely functional yet
+  // TODO this is checking students in even if they're already checked in
   checkIn: function ( req, res ) {
     console.log( req.body.data );
     let sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req.body.data ) + ';';

@@ -99,29 +99,15 @@ export default class StudentTable extends Component {
     return body;
   }
   
-  // TODO GET method cannot have body
-  async doGet( path, data = null ) {
-    let response;
-    let body;
-    if ( data ) {
-      response = await fetch( path, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify( { data: data } )
-      });
-    } else {
-      response = await fetch(path, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        }
-      } );
-      body = await response.json();
-    }
+  async doGet( path ) {
+    let response = await fetch( path, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    let body = await response.json();
     if ( response.status !== 200 ) {
       throw Error( body.message )
     }
@@ -130,8 +116,8 @@ export default class StudentTable extends Component {
   
   getAllStudents() {
     this.doGet( '/student/getAll' ).then( ( result ) => {
-      this.setState( { students: result } )
-    } );
+      this.setState( { students: result.students } )
+    });
   }
   
   addStudent( info ) {
@@ -208,7 +194,7 @@ export default class StudentTable extends Component {
           icons={this.tableIcons}
           title="Students"
           columns={this.state.columns}
-          data={this.state.data}
+          data={this.state.students}
           options={{ actionsColumnIndex: -1 }}
           components={this.components}
           actions={[
