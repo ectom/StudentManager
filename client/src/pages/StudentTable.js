@@ -43,7 +43,9 @@ export default class StudentTable extends Component {
           checkOut: false
         }
       ],
-    }
+    };
+    this.doGet = this.doGet.bind( this );
+    this.doPost = this.doPost.bind( this );
   }
   
   tableIcons = {
@@ -151,7 +153,11 @@ export default class StudentTable extends Component {
   // TODO make checkin function
   checkIn( student_id ) {
     console.log( student_id );
-    const checkedIn = this.doPost( '/student/checkIn', student_id );
+    const checkedIn = null;
+    this.doPost( '/student/checkIn', student_id ).then( ( response ) => {
+      console.log( response )
+    } );
+    console.log( checkedIn );
     if ( checkedIn === ' Checked In' ) {
       let data = this.state.data;
       data.checkIn = true;

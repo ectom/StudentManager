@@ -57,7 +57,7 @@ module.exports = {
         connection.release();
         if ( err ) throw err;
         if ( results ) {
-          res.send( 'Already Checked In' );
+          res.json( { message: 'Already Checked In' } );
         
         } else {
           sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape( req.body.data ) + ', NOW());';
