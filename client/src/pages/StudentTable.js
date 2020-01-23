@@ -156,11 +156,12 @@ export default class StudentTable extends Component {
     let checkedIn = null;
     this.doPost( '/student/checkIn', student_id ).then( ( response ) => {
       checkedIn = response.message;
+      console.log(checkedIn)
     } );
-    if ( checkedIn === ' Checked In' ) {
+    if ( checkedIn === ' Checking In' ) {
       let data = this.state.data;
       data.checkIn = true;
-      this.setState( { data: data } );
+      this.setState( { data: data }, () => { console.log(this.setState(data))} );
     }
   }
   

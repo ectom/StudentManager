@@ -74,7 +74,8 @@ module.exports = {
       connection.query( sql, ( err, results ) => {
         connection.release();
         if ( err ) throw err;
-        if ( results !== [] ) {
+        console.log(results[0])
+        if ( results[0] === undefined ) {
           sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape( req.body.data ) + ', NOW());';
           console.log( sql );
           mydb.getConnection( ( err, connection ) => {
@@ -82,7 +83,7 @@ module.exports = {
             connection.query( sql, ( err, result ) => {
               connection.release();
               if ( err ) throw err;
-              res.send( { message: 'Checked In' } );
+              res.send( { message: 'Checking In' } );
             } );
           } );
         } else {
