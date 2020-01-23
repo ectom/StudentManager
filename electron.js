@@ -11,11 +11,11 @@ const url = require('url');
 let mainWindow;
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 1000, height: 800 });
+  mainWindow = new BrowserWindow({ width: 1000, height: 800, webPreferences: { nodeIntegration: false }});
   
   mainWindow.loadURL('http://localhost:3000/');
   // mainWindow.loadURL(url.format({
-  //   pathname: path.join(__dirname, 'index.html'),
+  //   pathname: path.join(__dirname, '/client/public/index.html'),
   //   protocol: 'file:',
   //   slashes: true
   // }));
