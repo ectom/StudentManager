@@ -1,29 +1,58 @@
 {
   "name": "student_manager",
-  "version": "1.0.0",
-  "description": "",
-  "main": "electron.js",
-  "build":
-  {
-    "appId": "com.electron.studentmanager",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:5000",
+  "main": "src/electron.js",
+  "build": {
+    "appId": "com.ethantom.studentmanager",
     "mac": {
       "category": "productivity"
-    }
+    },
+    "buildResources": "src",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ]
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "@material-ui/icons": "^4.5.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "eslint": "^6.8.0",
+    "material-table": "^1.55.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
     "express": "^4.17.1",
     "mysql": "^2.17.1",
-    "path": "^0.12.7"
+    "body-parser": "latest"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron ."
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "browser-window": "^0.4.0",
+    "@material-ui/core": "^4.8.3",
     "concurrently": "^5.0.2",
     "electron": "^7.1.9",
     "electron-builder": "^22.2.0"
