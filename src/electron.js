@@ -1,7 +1,7 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const server = require('./server');
+require('./server');
 const Database = require('./server/models/mydb');
 
 
