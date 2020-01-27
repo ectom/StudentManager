@@ -1,6 +1,7 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+
 require('./server');
 const Database = require('./server/models/mydb');
 
@@ -11,7 +12,7 @@ const url = require('url');
 let mainWindow;
 
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 1000, height: 800, webPreferences: { nodeIntegration: false }});
+  mainWindow = new BrowserWindow({ width: 1000, height: 800, webPreferences: { nodeIntegration: true }});
   
   mainWindow.loadURL('http://localhost:3000/');
   // mainWindow.loadURL(url.format({
