@@ -19,13 +19,14 @@ module.exports = {
       } );
     } );
   },
-  getStudents: function ( req, res ) {
+  getStudents: function ( event, arg ) {
+    console.log(arg)
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( 'SELECT * FROM students;', ( err, result ) => {
         connection.release();
         if ( err ) throw err;
-        res.send( { students: result } );
+        event.reply('/return/allStudents', result)
       } );
     } );
   },

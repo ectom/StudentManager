@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import StudentTable from './pages/StudentTable';
-const { ipcRenderer, remote } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 // const electron = require('electron');
 // const fs = electron.remote.require('fs');
 // const ipcRenderer  = electron.ipcRenderer;

@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import { Button, Typography } from '@material-ui/core';
+const { ipcRenderer } = window.require('electron');
 
 
 export default class StudentTable extends Component {
@@ -83,20 +84,16 @@ export default class StudentTable extends Component {
   }
   
   async doPost( path, data ) {
-    const response = await fetch( path, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify( { data: data } )
-    } );
-    const body = await response.json();
-    
-    if (response.status !== 200) {
-        throw Error(body.message)
-    }
-    return body;
+    await ipcRenderer.invoke( path, data ).then((result) => {
+      console.log(result)
+      return result
+    })
+    // const body = await response.json();
+    //
+    // if (response.status !== 200) {
+    //     throw Error(body.message)
+    // }
+    // return body;
   }
   
   async doGet( path ) {
@@ -121,9 +118,10 @@ export default class StudentTable extends Component {
   }
   
   getAllStudents() {
-    this.doGet( '/student/getAll' ).then( ( result ) => {
-      this.setState( { students: result.students } )
-    });
+    ipcRenderer.send('/student/getAll', 'wgr' )
+    ipcRenderer.once('/return/allStudents',(event, result) => {
+      this.setState({ students: result })
+    })
   }
   
   addStudent( info ) {
