@@ -6,5 +6,5 @@ module.exports = function(app) {
   app.on( '/student/add', student.addStudent );
   app.on( '/student/checkIn', student.checkIn );
   app.on( '/express_backend', test.test );
-  app.on( '/12345', test.ipc);
+  app.handle( '/test_backend', test.ipc);
 };

@@ -7,6 +7,7 @@ module.exports = {
   },
   ipc: function (event, arg) {
     console.log(arg)
-    event.reply('/54321', {data: 'pong'})
+    return {data: 'Pong, connected to backend IPC'}
+    // event.reply('/54321', {data: 'pong'})
   }
 };
