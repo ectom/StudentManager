@@ -15,7 +15,7 @@ module.exports = {
       connection.query( sql, ( err, result ) => {
         connection.release();
         if ( err ) throw err;
-        event.reply( `/return${path}`, { student: result } );
+        event.reply( `/return${path}`, result );
       } );
     } );
   },
@@ -32,23 +32,19 @@ module.exports = {
   addStudent: function ( event, req, path ) {
     const student = req.data;
     const keys = Object.keys( student );
-    const values = Object.values( student );
-    let cols = '(';
-    let vals = '(';
+    const vals = Object.values( student );
+    let columns = '(';
+    let values = '(';
     for ( let i = 0; i < keys.length; i++ ) {
-      if ( values[i] === '' ) {
+      if ( vals[i] === '' ) {
         continue;
       }
-      cols += keys[i] + ",";
-      if ( typeof ( values[i] ) === 'string' ) {
-        vals += "'" + values[i] + "',";
-      } else {
-        vals += values[i] + ',';
-      }
+      columns += `${mysql.escape(keys[i])},`;
+      values += `${mysql.escape(vals[i])},`;
     }
-    cols += 'created)';
-    vals += 'NOW())';
-    const sql = 'INSERT INTO students ' + mysql.escape( cols ) + ' VALUES ' + mysql.escape( vals ) + ';';
+    columns += 'created)';
+    values += 'NOW())';
+    const sql = 'INSERT INTO students ' + mysql.escape( columns ) + ' VALUES ' + mysql.escape( values ) + ';';
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( sql, ( err ) => {
@@ -61,27 +57,44 @@ module.exports = {
   editStudent: function ( event, req, path ) {
     const student_id = req.student_id;
     delete req.student_id;
-    const cols = Object.keys(req);
+    req = {
+      first_name: 'john',
+      last_name: 'serh',
+      math: 'true'
+    }
+    const keys = Object.keys(req);
     const vals = Object.values(req);
     let items = '(';
-    for ( let i = 0; i < cols.length; i++ ) {
+    for ( let i = 0; i < keys.length; i++ ) {
       if ( vals[i] === '' ) {
         continue;
       }
-      items += mysql.escape(cols[i]) + "=";
-      if ( typeof ( vals[i] ) === 'string' ) {
-        items += "'" + mysql.escape(vals[i]) + "',";
-      } else {
-        items += mysql.escape(vals[i]) + ',';
-      }
+      items += `${mysql.escape(keys[i])}=${mysql.escape(vals[i])},`;
     }
+    items = items.substring(0, items.length - 1);
     items += ')';
     const sql = 'UPDATE students SET ' + items + 'WHERE student_id = ' + mysql.escape(student_id) + ';'
+    console.log(sql);
+    mydb.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(sql, (err, result) => {
+        connection.release();
+        if (err) throw err;
+        event.reply(`/return${path}`, result);
+      });
+    });
   },
   deleteStudent: function ( event, req, path ) {
-  
+    mydb.getConnection((err, connection) => {
+      if (err) throw err;
+      const sql = `DELETE FROM students WHERE student_id=${mysql.escape(req)};`;
+      connection.query(sql, (err, result) => {
+        connection.release();
+        if (err) throw err;
+        event.reply(`/return${path}`, result);
+      });
+    });
   },
-  // TODO this is checking students in even if they're already checked in
   checkIn: function ( event, req, path ) {
     let sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req ) + ';';
     mydb.getConnection( ( err, connection ) => {
