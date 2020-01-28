@@ -47,8 +47,7 @@ export default class StudentTable extends Component {
       students: [],
     };
     this.getAllStudents();
-    this.doGet = this.doGet.bind( this );
-    this.doPost = this.doPost.bind( this );
+    this.backendCall = this.backendCall.bind( this );
   }
   
   tableIcons = {
@@ -83,44 +82,24 @@ export default class StudentTable extends Component {
     } )
   }
   
-  async doPost( path, data ) {
-    await ipcRenderer.invoke( path, data ).then((result) => {
-      console.log(result)
-      return result
-    })
-    // const body = await response.json();
-    //
-    // if (response.status !== 200) {
-    //     throw Error(body.message)
-    // }
-    // return body;
-  }
-  
-  async doGet( path ) {
-    let response = await fetch( path, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      }
+  async backendCall( path, arg ) {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.send( `${path}`, arg, path )
+      ipcRenderer.once(`/return${path}`,(event, result) => {
+        resolve( result);
+      });
     });
-    let body = await response.json();
-    if ( response.status !== 200 ) {
-      throw Error( body.message )
-    }
-    return body;
   }
   
   getStudent(student_id) {
-    this.doPost('/student/getOne', student_id ).then( ( result ) => {
-      console.log('Got student: ' + result);
+    this.backendCall('/student/getOne', student_id ).then( ( response ) => {
+      console.log('Got student: ' + response.student);
     })
   }
   
   getAllStudents() {
-    ipcRenderer.send('/student/getAll', 'wgr' )
-    ipcRenderer.once('/return/allStudents',(event, result) => {
-      this.setState({ students: result })
+    this.backendCall('/student/getAll', 'wgr').then((response) => {
+      this.setState({ students: response })
     })
   }
   
@@ -145,14 +124,13 @@ export default class StudentTable extends Component {
       parent1_id: info.parent1_id,
       parent2_id: info.parent2_id
     };
-    this.doPost( '/student/add', student ).then( res => console.log( res ) );
+    this.backendCall( '/student/add', student ).then( res => console.log( res ) );
   }
   
-  // TODO make checkin function
   checkIn( student_id ) {
     console.log( student_id );
     let checkedIn = null;
-    this.doPost( '/student/checkIn', student_id ).then( ( response ) => {
+    this.backendCall( '/student/checkIn', student_id ).then( ( response ) => {
       checkedIn = response.message;
       console.log(checkedIn)
     } );

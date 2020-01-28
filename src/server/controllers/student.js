@@ -8,30 +8,29 @@ const mydb = mysql.createPool( {
 } );
 
 module.exports = {
-  getStudent: function ( req, res ) {
+  getStudent: function ( event, req, path ) {
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
-      const sql = 'SELECT * FROM students WHERE student_id=' + mysql.escape(req.body.data) + ';';
-      connection.query(sql, ( err, result ) => {
+      const sql = 'SELECT * FROM students WHERE student_id=' + mysql.escape( req ) + ';';
+      connection.query( sql, ( err, result ) => {
         connection.release();
         if ( err ) throw err;
-        res.send( { student: result } );
+        event.reply( `/return${path}`, { student: result } );
       } );
     } );
   },
-  getStudents: function ( event, arg ) {
-    console.log(arg)
+  getStudents: function ( event, req, path ) {
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( 'SELECT * FROM students;', ( err, result ) => {
         connection.release();
         if ( err ) throw err;
-        event.reply('/return/allStudents', result)
+        event.reply( `/return${path}`, result )
       } );
     } );
   },
-  addStudent: function ( req, res ) {
-    const student = req.body.data;
+  addStudent: function ( event, req, path ) {
+    const student = req.data;
     const keys = Object.keys( student );
     const values = Object.values( student );
     let cols = '(';
@@ -55,40 +54,54 @@ module.exports = {
       connection.query( sql, ( err ) => {
         connection.release();
         if ( err ) throw err;
-        res.send( 'Student added!' )
+        event.reply( `/return${path}`, 'Student added!' )
       } );
     } );
   },
-  editStudent: function ( req, res ) {
-  
+  editStudent: function ( event, req, path ) {
+    const student_id = req.student_id;
+    delete req.student_id;
+    const cols = Object.keys(req);
+    const vals = Object.values(req);
+    let items = '(';
+    for ( let i = 0; i < cols.length; i++ ) {
+      if ( vals[i] === '' ) {
+        continue;
+      }
+      items += mysql.escape(cols[i]) + "=";
+      if ( typeof ( vals[i] ) === 'string' ) {
+        items += "'" + mysql.escape(vals[i]) + "',";
+      } else {
+        items += mysql.escape(vals[i]) + ',';
+      }
+    }
+    items += ')';
+    const sql = 'UPDATE students SET ' + items + 'WHERE student_id = ' + mysql.escape(student_id) + ';'
   },
-  deleteStudent: function ( req, res ) {
+  deleteStudent: function ( event, req, path ) {
   
   },
   // TODO this is checking students in even if they're already checked in
-  checkIn: function ( req, res ) {
-    console.log( req.body.data );
-    let sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req.body.data ) + ';';
-    console.log( sql );
+  checkIn: function ( event, req, path ) {
+    let sql = 'SELECT student_id FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req ) + ';';
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( sql, ( err, results ) => {
         connection.release();
         if ( err ) throw err;
-        console.log(results[0])
         if ( results[0] === undefined ) {
-          sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape( req.body.data ) + ', NOW());';
+          sql = 'INSERT INTO attendance (student_id, time_in) VALUES (' + mysql.escape( req ) + ', NOW());';
           console.log( sql );
           mydb.getConnection( ( err, connection ) => {
             if ( err ) throw err;
             connection.query( sql, ( err, result ) => {
               connection.release();
               if ( err ) throw err;
-              res.send( { message: 'Checking In' } );
+              event.reply(`/return${path}`, { message: 'Checking In' } );
             } );
           } );
         } else {
-          res.send( { message: 'Already Checked In' } );
+          event.reply(`/return${path}`, { message: 'Already Checked In' } );
         }
       } );
     } );
