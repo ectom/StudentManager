@@ -20,14 +20,15 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "body-parser": "latest",
+    "electron-router": "^0.4.4",
     "eslint": "^6.8.0",
+    "express": "^4.17.1",
     "material-table": "^1.55.0",
+    "mysql": "^2.17.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0",
-    "express": "^4.17.1",
-    "mysql": "^2.17.1",
-    "body-parser": "latest"
+    "react-scripts": "3.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

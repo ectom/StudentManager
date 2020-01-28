@@ -2,26 +2,31 @@ import React, { Component } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import StudentTable from './pages/StudentTable';
+const { ipcRenderer } = window.require('electron');
+// const electron = require('electron');
+// const fs = electron.remote.require('fs');
+// const ipcRenderer  = electron.ipcRenderer;
 
 class App extends Component {
-  state = {
-    data: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: null
+    };
+  }
   
   componentDidMount() {
-    // Call our fetch function below once the component mounts
     this.callBackendAPI()
-    .then(res => this.setState({ data: res.express }))
-    .catch(err => console.log(err));
   }
   callBackendAPI = async () => {
-    const response = await fetch('/express_backend');
-    const body = await response.json();
-
-    if (response.status !== 200) {
-      throw Error(body.message)
-    }
-    return body;
+    // ipcRenderer.send('/12345', 'ping');
+    // ipcRenderer.once('/54321', (event, res) => {
+    //   console.log(event, res)
+    //   return res
+    // })
+    ipcRenderer.invoke('/test_backend', 'ping').then((result) => {
+      this.setState({ data: result.data })
+    })
   };
   
   render() {
