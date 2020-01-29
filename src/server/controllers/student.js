@@ -57,11 +57,6 @@ module.exports = {
   editStudent: function ( event, req, path ) {
     const student_id = req.student_id;
     delete req.student_id;
-    req = {
-      first_name: 'john',
-      last_name: 'serh',
-      math: 'true'
-    }
     const keys = Object.keys(req);
     const vals = Object.values(req);
     let items = '(';

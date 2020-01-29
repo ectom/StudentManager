@@ -53,21 +53,31 @@ module.exports = {
         event.reply( `/return${path}`, result );
       })
     })
-//  id int PRIMARY KEY auto_increment,
-//  first_name VARCHAR(255),
-//  middle_name VARCHAR(255),
-//  last_name VARCHAR(255),
-//  carrier VARCHAR(255),
-//  phone_number VARCHAR(255),
-//  email VARCHAR(255),
-//  messaging boolean NOT NULL,
-//  emailing boolean NOT NULL,
-//  guardian VARCHAR(255),
-//  notes TEXT
-
   },
   editParent: function (event, req, path) {
-
+    const parent_id = req.parent_id;
+    delete req.parent_id;
+    const keys = Object.keys(req);
+    const vals = Object.values(req);
+    let items = '(';
+    for ( let i = 0; i < keys.length; i++ ) {
+      if ( vals[i] === '' ) {
+        continue;
+      }
+      items += `${mysql.escape(keys[i])}=${mysql.escape(vals[i])},`;
+    }
+    items = items.substring(0, items.length - 1);
+    items += ')';
+    const sql = 'UPDATE parents SET ' + items + 'WHERE id = ' + mysql.escape(parent_id) + ';'
+    console.log(sql);
+    mydb.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(sql, (err, result) => {
+        connection.release();
+        if (err) throw err;
+        event.reply(`/return${path}`, result);
+      });
+    });
   },
   deleteParent: function (event, req, path) {
     mydb.getConnection((err, connection) => {
