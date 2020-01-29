@@ -44,7 +44,7 @@ module.exports = {
     }
     columns += 'created)';
     values += 'NOW())';
-    const sql = 'INSERT INTO students ' + mysql.escape( columns ) + ' VALUES ' + mysql.escape( values ) + ';';
+    const sql = `INSERT INTO students ${mysql.escape(columns)} VALUES ${mysql.escape( values )};`;
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( sql, ( err ) => {
