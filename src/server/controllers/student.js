@@ -44,7 +44,7 @@ module.exports = {
     }
     columns += 'created)';
     values += 'NOW())';
-    const sql = 'INSERT INTO students ' + mysql.escape( columns ) + ' VALUES ' + mysql.escape( values ) + ';';
+    const sql = `INSERT INTO students ${mysql.escape(columns)} VALUES ${mysql.escape( values )};`;
     mydb.getConnection( ( err, connection ) => {
       if ( err ) throw err;
       connection.query( sql, ( err ) => {
@@ -57,11 +57,6 @@ module.exports = {
   editStudent: function ( event, req, path ) {
     const student_id = req.student_id;
     delete req.student_id;
-    req = {
-      first_name: 'john',
-      last_name: 'serh',
-      math: 'true'
-    }
     const keys = Object.keys(req);
     const vals = Object.values(req);
     let items = '(';
@@ -115,6 +110,30 @@ module.exports = {
           } );
         } else {
           event.reply(`/return${path}`, { message: 'Already Checked In' } );
+        }
+      } );
+    } );
+  },
+  checkOut: function ( event, req, path ) {
+    let sql = 'SELECT time_out FROM attendance WHERE DATE(time_in) = CURDATE() and student_id = ' + mysql.escape( req ) + ';';
+    mydb.getConnection( ( err, connection ) => {
+      if ( err ) throw err;
+      connection.query( sql, ( err, results ) => {
+        connection.release();
+        if ( err ) throw err;
+        if ( results[0] === undefined ) {
+          sql = 'INSERT INTO attendance (student_id, time_out) VALUES (' + mysql.escape( req ) + ', NOW());';
+          console.log( sql );
+          mydb.getConnection( ( err, connection ) => {
+            if ( err ) throw err;
+            connection.query( sql, ( err, result ) => {
+              connection.release();
+              if ( err ) throw err;
+              event.reply(`/return${path}`, { message: 'Checking Out' } );
+            } );
+          } );
+        } else {
+          event.reply(`/return${path}`, { message: 'Already Checked Out' } );
         }
       } );
     } );
