@@ -15,7 +15,7 @@ module.exports = {
       connection.query(sql, (err, result) => {
         connection.release();
         if (err) throw err;
-        event.reply( `/return${path}`, result);
+        event.reply( `/return${path}`, result );
       });
     });
   },
@@ -25,7 +25,7 @@ module.exports = {
       connection.query(`SELECT * FROM parents`, (err, result) => {
         connection.release();
         if (err) throw err;
-        event.reply( `/return${path}`, result);
+        event.reply( `/return${path}`, result );
       });
     });
   },
@@ -36,6 +36,14 @@ module.exports = {
 
   },
   deleteParent: function (event, req, path) {
-
+    mydb.getConnection((err, connection) => {
+      if (err) throw err;
+      const sql = `DELETE * FROM parents WHERE id = ${req}`
+      connection.query(sql, (err, result) => {
+        connection.release();
+        if (err) throw err;
+        event.reply( `/return${path}`, result );
+      });
+    });
   }
 }
