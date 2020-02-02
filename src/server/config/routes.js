@@ -1,5 +1,5 @@
 const student = require('../controllers/student');
-const student = require('../controllers/parent');
+const parent = require('../controllers/parent');
 const test = require('../controllers/test');
 
 module.exports = function(app) {
