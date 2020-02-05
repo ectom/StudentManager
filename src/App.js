@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import StudentTable from './pages/StudentTable';
+import AddStudentForm from './pages/AddStudentForm';
 const { ipcRenderer } = window.require('electron');
-// const electron = require('electron');
-// const fs = electron.remote.require('fs');
-// const ipcRenderer  = electron.ipcRenderer;
 
 class App extends Component {
   constructor(props) {
@@ -34,6 +32,7 @@ class App extends Component {
       <>
         <Navbar/>
         <StudentTable data={this.state.data}/>
+        <AddStudentForm />
       </>
     );
   }
