@@ -24,18 +24,23 @@ export default class StudentTable extends Component {
   }
   
   submitStudent() {
+    console.log(this.state)
+    // TODO send to backend, make this a modal, create correct creation flow: parents -> students
+  }
   
+  handleInput(event, key) {
+    this.setState({ [key]: event.target.value });
   }
   
   render() {
     return (
       <>
         <Paper>
-          <FormControl onSubmit={this.submitStudent} autoComplete="off">
-            <TextField label={'Student ID'} name="student_id" variant="standard"/>
-            <TextField label={'First Name'} name="first_name" variant="standard"/>
-            <TextField label={'Middle Name'} name="middle_name" variant="standard"/>
-            <TextField label={'LastName'} name="last_name" variant="standard"/>
+          <FormControl autoComplete="off">
+            <TextField label={'Student ID'} name="student_id" variant="standard" onChange={(e) => this.handleInput(e,'student_id')}/>
+            <TextField label={'First Name'} name="first_name" variant="standard" onChange={(e) => this.handleInput(e,'first_name')}/>
+            <TextField label={'Middle Name'} name="middle_name" variant="standard" onChange={(e) => this.handleInput(e,'middle_name')}/>
+            <TextField label={'LastName'} name="last_name" variant="standard" onChange={(e) => this.handleInput(e,'last_name')}/>
             <FormControlLabel
               style={{justify: 'left'}}
               value="math"
@@ -54,8 +59,8 @@ export default class StudentTable extends Component {
               label="Reading"
               labelPlacement="start"
             />
-            <TextField multiline={true} label={'Notes'} rows={4} name="notes" variant="standard"/>
-            <Button type={'submit'}>Submit</Button>
+            <TextField multiline={true} label={'Notes'} rows={4} name="notes" variant="standard" onChange={(e) => this.handleInput(e,'notes')}/>
+            <Button onClick={() => this.submitStudent()}>Submit</Button>
           </FormControl>
         </Paper>
       </>
