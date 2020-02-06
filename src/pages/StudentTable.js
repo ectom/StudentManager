@@ -81,7 +81,7 @@ export default class StudentTable extends Component {
       }, 600 );
     } )
   }
-  
+
   async backendCall( path, arg ) {
     return new Promise((resolve, reject) => {
       ipcRenderer.send( `${path}`, arg, path )
