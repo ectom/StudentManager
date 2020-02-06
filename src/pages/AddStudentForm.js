@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Paper, TextField, Checkbox, Button, FormControl, FormControlLabel } from '@material-ui/core';
+const { ipcRenderer } = window.require('electron');
+
+// TODO make this a modal, create correct creation flow: parents -> students
 
 export default class StudentTable extends Component {
   constructor( props ) {
@@ -13,6 +16,7 @@ export default class StudentTable extends Component {
       reading: false,
       notes: ''
     }
+    this.backendCall = this.backendCall.bind( this );
   }
   
   handleCheckbox( subject ) {
@@ -23,9 +27,20 @@ export default class StudentTable extends Component {
     }
   }
   
+  async backendCall( path, arg ) {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.send( `${path}`, arg, path )
+      ipcRenderer.once(`/return${path}`,(event, result) => {
+        resolve( result);
+      });
+    });
+  }
+  
   submitStudent() {
     console.log(this.state)
-    // TODO send to backend, make this a modal, create correct creation flow: parents -> students
+    this.backendCall('/student/add', { data: this.state }).then((response) => {
+      console.log(response)
+    })
   }
   
   handleInput(event, key) {
