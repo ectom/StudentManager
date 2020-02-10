@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import { Button, Typography } from '@material-ui/core';
+import AddParentForm from './AddParentForm';
 const { ipcRenderer } = window.require('electron');
 
 
@@ -184,6 +185,7 @@ export default class StudentTable extends Component {
             { icon: 'checkIn' },
           ]}
         />
+        <AddParentForm />
         <Typography>{this.props.data}</Typography>
       </>
     );

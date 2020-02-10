@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Paper, TextField, Checkbox, Button, FormControl, FormControlLabel, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { Backdrop, Modal, Fade, TextField, Checkbox, Button, FormControl, FormControlLabel, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 const { ipcRenderer } = window.require('electron');
 
 // TODO make this a modal, create correct creation flow: parents -> students
@@ -8,16 +9,19 @@ export default class ParentForm extends Component {
   constructor( props ) {
     super( props );
     this.state = {
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      carrier: '',
-      phone_number: '',
-      email: '',
-      messaging: false,
-      emailing: false,
-      guardian: '',
-      notes: ''
+      parent: {
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        carrier: '',
+        phone_number: '',
+        email: '',
+        messaging: false,
+        emailing: false,
+        guardian: '',
+        notes: ''
+      },
+      modal: false
     };
     this.backendCall = this.backendCall.bind( this );
   }
@@ -41,7 +45,7 @@ export default class ParentForm extends Component {
   
   submitParent() {
     console.log(this.state)
-    this.backendCall('/parent/add', { data: this.state }).then((response) => {
+    this.backendCall('/parent/add', { data: this.state.parent }).then((response) => {
       console.log(response)
     })
   }
@@ -54,10 +58,40 @@ export default class ParentForm extends Component {
     this.setState({guardian: e.target.value});
   };
   
+  handleOpen = () => {
+    this.setState({ modal: true });
+  };
+  
+  handleClose = () => {
+    this.setState({ modal: false});
+  };
+  
+  
+  classes = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  
   render() {
     return (
       <>
-        <Paper>
+        <Button type="button" onClick={this.handleOpen}>
+          react-transition-group
+        </Button>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          className={this.classes}
+          open={this.state.modal}
+          onClose={this.handleClose}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
+        >
+          <Fade in={this.state.modal}>
           <FormControl autoComplete="off">
             <TextField label={'First Name'} name="first_name" variant="standard" onChange={(e) => this.handleInput(e,'first_name')}/>
             <TextField label={'Middle Name'} name="middle_name" variant="standard" onChange={(e) => this.handleInput(e,'middle_name')}/>
@@ -102,7 +136,8 @@ export default class ParentForm extends Component {
             <TextField multiline={true} label={'Notes'} rows={4} name="notes" variant="standard" onChange={(e) => this.handleInput(e,'notes')}/>
             <Button onClick={() => this.submitParent()}>Submit</Button>
           </FormControl>
-        </Paper>
+          </Fade>
+        </Modal>
       </>
     );
   };
