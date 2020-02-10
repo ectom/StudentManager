@@ -11,8 +11,8 @@ module.exports = function(app) {
   app.on( '/student/delete', student.deleteStudent );
   app.on( '/parent/getOne', parent.getOne );
   app.on( '/parent/getAll', parent.getAll );
-  app.on( '/parent/addParent', parent.addParent );
-  app.on( '/parent/editParent', parent.editParent );
-  app.on( '/parent/deleteParent', parent.deleteParent );
+  app.on( '/parent/add', parent.addParent );
+  app.on( '/parent/edit', parent.editParent );
+  app.on( '/parent/delete', parent.deleteParent );
   app.handle( '/test_backend', test.ipc );
 };

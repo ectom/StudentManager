@@ -4,7 +4,7 @@ const { ipcRenderer } = window.require('electron');
 
 // TODO make this a modal, create correct creation flow: parents -> students
 
-export default class StudentTable extends Component {
+export default class StudentForm extends Component {
   constructor( props ) {
     super( props );
     this.state = {

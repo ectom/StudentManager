@@ -32,21 +32,21 @@ module.exports = {
   addParent: function (event, req, path) {
     mydb.getConnection((err, connection) => {
       if (err) throw err;
-      const parent = req.data;
-      const keys = Object.keys( parent );
-      const vals = Object.values( parent );
+      const keys = Object.keys( req.data );
+      const vals = Object.values( req.data );
       let columns = '(';
       let values = '(';
       for ( let i = 0; i < keys.length; i++ ) {
         if ( vals[i] === '' ) {
           continue;
         }
-        columns += `${mysql.escape(keys[i])},`;
+        columns += `${keys[i]},`;
         values += `${mysql.escape(vals[i])},`;
       }
       columns = columns.substring(0, columns.length - 1) + ')';
       values = values.substring(0, values.length - 1) + ')';
-      const sql = `INSERT INTO parents ${mysql.escape(columns)} VALUES ${mysql.escape(values)};`;
+      const sql = `INSERT INTO parents ${columns} VALUES ${values};`;
+      console.log(sql)
       connection.query(sql, (err, result) => {
         connection.release();
         if (err) throw err;
