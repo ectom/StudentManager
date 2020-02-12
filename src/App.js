@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import StudentTable from './pages/StudentTable';
-import AddStudentForm from './pages/AddStudentForm';
+import AddParentForm from './pages/AddParentForm';
 const { ipcRenderer } = window.require('electron');
 
 class App extends Component {
@@ -32,7 +32,6 @@ class App extends Component {
       <>
         <Navbar/>
         <StudentTable data={this.state.data}/>
-        <AddStudentForm />
       </>
     );
   }
