@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Backdrop, Modal, Fade, TextField, Checkbox, Button, FormControl, FormControlLabel, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Backdrop, Typography, Paper, Modal, Fade, TextField, Checkbox, Button, FormControl, FormControlLabel, InputLabel, Select, MenuItem } from '@material-ui/core';
 const { ipcRenderer } = window.require('electron');
 
 // TODO make this a modal, create correct creation flow: parents -> students
@@ -68,21 +67,34 @@ export default class ParentForm extends Component {
   
   
   classes = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white'
+    },
+    paper: {
+      backgroundColor: 'white',
+      minWidth: 500,
+      padding: 75,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    title: {
+      fontWeight: 'bold',
+      fontSize: 30
+    }
   };
   
   render() {
     return (
       <>
         <Button type="button" onClick={this.handleOpen}>
-          react-transition-group
+          Add Parent
         </Button>
         <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          className={this.classes}
+          style={this.classes.modal}
           open={this.state.modal}
           onClose={this.handleClose}
           closeAfterTransition
@@ -92,50 +104,53 @@ export default class ParentForm extends Component {
           }}
         >
           <Fade in={this.state.modal}>
-          <FormControl autoComplete="off">
-            <TextField label={'First Name'} name="first_name" variant="standard" onChange={(e) => this.handleInput(e,'first_name')}/>
-            <TextField label={'Middle Name'} name="middle_name" variant="standard" onChange={(e) => this.handleInput(e,'middle_name')}/>
-            <TextField label={'Last Name'} name="last_name" variant="standard" onChange={(e) => this.handleInput(e,'last_name')}/>
-            <TextField label={'Cell Phone Carrier'} name="carrier" variant="standard" onChange={(e) => this.handleInput(e,'carrier')}/>
-            <TextField label={'Phone Number'} name="phone_number" variant="standard" onChange={(e) => this.handleInput(e,'phone_number')}/>
-            <TextField label={'Email'} name="email" variant="standard" onChange={(e) => this.handleInput(e,'email')}/>
-            <FormControl>
-              <InputLabel>Guardian</InputLabel>
-              <Select
-                value={this.state.guardian}
-                onChange={(e) => this.handleSelector(e)}
-              >
-                <MenuItem value={'Father'}>Father</MenuItem>
-                <MenuItem value={'Mother'}>Mother</MenuItem>
-                <MenuItem value={'Uncle'}>Uncle</MenuItem>
-                <MenuItem value={'Aunt'}>Aunt</MenuItem>
-                <MenuItem value={'Brother'}>Brother</MenuItem>
-                <MenuItem value={'Sister'}>Sister</MenuItem>
-                <MenuItem value={'Cousin'}>Cousin</MenuItem>
-                <MenuItem value={'Other'}>Other</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              style={{justify: 'left'}}
-              value="messaging"
-              control={<Checkbox name='messaging' onChange={() => {
-                this.handleCheckbox( 'messaging' )
-              }} />}
-              label="Can we text you"
-              labelPlacement="start"
-            />
-            <FormControlLabel
-              style={{justify: 'left'}}
-              value="emailing"
-              control={<Checkbox name='emailing' onChange={() => {
-                this.handleCheckbox( 'emailing' )
-              }} />}
-              label="Can we email you?"
-              labelPlacement="start"
-            />
-            <TextField multiline={true} label={'Notes'} rows={4} name="notes" variant="standard" onChange={(e) => this.handleInput(e,'notes')}/>
-            <Button onClick={() => this.submitParent()}>Submit</Button>
-          </FormControl>
+            <Paper style={this.classes.paper}>
+              <FormControl autoComplete="off">
+                <Typography style={this.classes.title}>Add Parent</Typography>
+                <TextField label={'First Name'} name="first_name" variant="standard" onChange={(e) => this.handleInput(e,'first_name')}/>
+                <TextField label={'Middle Name'} name="middle_name" variant="standard" onChange={(e) => this.handleInput(e,'middle_name')}/>
+                <TextField label={'Last Name'} name="last_name" variant="standard" onChange={(e) => this.handleInput(e,'last_name')}/>
+                <TextField label={'Cell Phone Carrier'} name="carrier" variant="standard" onChange={(e) => this.handleInput(e,'carrier')}/>
+                <TextField label={'Phone Number'} name="phone_number" variant="standard" onChange={(e) => this.handleInput(e,'phone_number')}/>
+                <TextField label={'Email'} name="email" variant="standard" onChange={(e) => this.handleInput(e,'email')}/>
+                <FormControl>
+                  <InputLabel>Guardian</InputLabel>
+                  <Select
+                    value={this.state.guardian}
+                    onChange={(e) => this.handleSelector(e)}
+                  >
+                    <MenuItem value={'Father'}>Father</MenuItem>
+                    <MenuItem value={'Mother'}>Mother</MenuItem>
+                    <MenuItem value={'Uncle'}>Uncle</MenuItem>
+                    <MenuItem value={'Aunt'}>Aunt</MenuItem>
+                    <MenuItem value={'Brother'}>Brother</MenuItem>
+                    <MenuItem value={'Sister'}>Sister</MenuItem>
+                    <MenuItem value={'Cousin'}>Cousin</MenuItem>
+                    <MenuItem value={'Other'}>Other</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControlLabel
+                  style={{justify: 'left'}}
+                  value="messaging"
+                  control={<Checkbox name='messaging' onChange={() => {
+                    this.handleCheckbox( 'messaging' )
+                  }} />}
+                  label="Can we text you"
+                  labelPlacement="start"
+                />
+                <FormControlLabel
+                  style={{justify: 'left'}}
+                  value="emailing"
+                  control={<Checkbox name='emailing' onChange={() => {
+                    this.handleCheckbox( 'emailing' )
+                  }} />}
+                  label="Can we email you?"
+                  labelPlacement="start"
+                />
+                <TextField multiline={true} label={'Notes'} rows={4} name="notes" variant="standard" onChange={(e) => this.handleInput(e,'notes')}/>
+                <Button onClick={() => this.submitParent()}>Submit</Button>
+              </FormControl>
+            </Paper>
           </Fade>
         </Modal>
       </>
